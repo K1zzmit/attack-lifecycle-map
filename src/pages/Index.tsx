@@ -5,13 +5,14 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
 
-interface TimelineEvent {
+export interface TimelineEvent {
   id: string;
   timestamp: string;
   title: string;
   description: string;
   technique?: string;
   artifacts?: string[];
+  parentId?: string;
 }
 
 const Index = () => {

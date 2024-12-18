@@ -13,15 +13,8 @@ import {
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Label } from './ui/label';
-
-interface TimelineEvent {
-  id: string;
-  timestamp: string;
-  title: string;
-  description: string;
-  technique?: string;
-  artifacts?: string[];
-}
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import type { TimelineEvent } from '@/pages/Index';
 
 interface TimelineProps {
   events: TimelineEvent[];
@@ -74,6 +67,11 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
                     <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
                       {event.technique}
                     </span>
+                  </div>
+                )}
+                {event.parentId && (
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Connected to: {events.find(e => e.id === event.parentId)?.title || 'Unknown Event'}
                   </div>
                 )}
               </div>
@@ -148,6 +146,35 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
                   }
                 }}
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="parentId">Connected to Event</Label>
+              <Select
+                value={selectedEvent?.parentId || ''}
+                onValueChange={(value) => {
+                  if (selectedEvent) {
+                    setSelectedEvent({
+                      ...selectedEvent,
+                      parentId: value === 'none' ? undefined : value,
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select parent event" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {events
+                    .filter(event => event.id !== selectedEvent?.id)
+                    .map(event => (
+                      <SelectItem key={event.id} value={event.id}>
+                        {event.title || 'Untitled Event'}
+                      </SelectItem>
+                    ))
+                  }
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>

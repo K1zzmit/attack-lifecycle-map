@@ -2,48 +2,78 @@ import React, { useEffect, useRef } from 'react';
 import { Card } from './ui/card';
 import { ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from './ui/button';
+import type { TimelineEvent } from '@/pages/Index';
+import {
+  ReactFlow,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
 interface VisualizationProps {
-  events: any[];
+  events: TimelineEvent[];
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = React.useState(1);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const handleZoomIn = () => {
-    setZoom((prev) => Math.min(prev + 0.1, 2));
-  };
+  useEffect(() => {
+    // Convert events to nodes and edges
+    const newNodes = events.map((event) => ({
+      id: event.id,
+      type: 'default',
+      data: { 
+        label: (
+          <div className="p-2 max-w-[200px]">
+            <div className="font-medium truncate">{event.title || 'Untitled Event'}</div>
+            <div className="text-xs text-muted-foreground truncate">{event.timestamp}</div>
+            {event.technique && (
+              <div className="mt-1">
+                <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
+                  {event.technique}
+                </span>
+              </div>
+            )}
+          </div>
+        )
+      },
+      position: { 
+        x: Math.random() * 500, 
+        y: new Date(event.timestamp).getTime() / 100000
+      },
+    }));
 
-  const handleZoomOut = () => {
-    setZoom((prev) => Math.max(prev - 0.1, 0.5));
-  };
+    const newEdges = events
+      .filter(event => event.parentId)
+      .map(event => ({
+        id: `${event.parentId}-${event.id}`,
+        source: event.parentId!,
+        target: event.id,
+        animated: true,
+        style: { stroke: 'rgb(148, 163, 184)' },
+      }));
+
+    setNodes(newNodes);
+    setEdges(newEdges);
+  }, [events, setNodes, setEdges]);
 
   return (
     <Card className="h-full bg-background/50 backdrop-blur relative">
-      <div className="absolute top-4 right-4 flex gap-2 z-10">
-        <Button variant="outline" size="icon" onClick={handleZoomIn}>
-          <ZoomIn className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="icon" onClick={handleZoomOut}>
-          <ZoomOut className="h-4 w-4" />
-        </Button>
-      </div>
-      <div
-        ref={containerRef}
-        className="h-full overflow-hidden"
-        style={{
-          transform: `scale(${zoom})`,
-          transformOrigin: '50% 0',
-          transition: 'transform 0.2s ease-out',
-        }}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView
       >
-        {events.map((event) => (
-          <div key={event.id} className="visualization-node">
-            {/* Node content */}
-          </div>
-        ))}
-      </div>
+        <Background />
+        <Controls />
+        <MiniMap />
+      </ReactFlow>
     </Card>
   );
 };
