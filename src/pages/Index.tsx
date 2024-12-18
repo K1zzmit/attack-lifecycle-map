@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Timeline from "@/components/Timeline";
 import Visualization from "@/components/Visualization";
 import { useState } from "react";
-import { v4 as uuidv4 } from "@tanstack/react-query";
+import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
 
 interface TimelineEvent {
