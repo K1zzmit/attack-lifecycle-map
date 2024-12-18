@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import Timeline from '@/components/Timeline';
-import Visualization from '@/components/Visualization';
-import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Timeline from "@/components/Timeline";
+import Visualization from "@/components/Visualization";
+import { useState } from "react";
+import { v4 as uuidv4 } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
 
-interface Event {
+interface TimelineEvent {
   id: string;
   timestamp: string;
   title: string;
@@ -14,40 +16,25 @@ interface Event {
 
 const Index = () => {
   const { toast } = useToast();
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: '1',
-      timestamp: '2024-04-10 09:15:00',
-      title: 'Initial Access',
-      description: 'Phishing email detected targeting finance department',
-      technique: 'T1566.001 - Spearphishing Attachment',
-    },
-    {
-      id: '2',
-      timestamp: '2024-04-10 09:30:00',
-      title: 'Execution',
-      description: 'Malicious macro executed on WORKSTATION-01',
-      technique: 'T1204.002 - Malicious File',
-    },
-  ]);
+  const [events, setEvents] = useState<TimelineEvent[]>([]);
 
   const handleAddEvent = () => {
-    const newEvent: Event = {
-      id: String(events.length + 1),
-      timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
-      title: 'New Event',
-      description: 'Description of the new event',
+    const newEvent: TimelineEvent = {
+      id: uuidv4(),
+      timestamp: new Date().toISOString().slice(0, 16),
+      title: "",
+      description: "",
     };
     setEvents([...events, newEvent]);
     toast({
-      title: 'Event Added',
-      description: 'A new event has been added to the timeline.',
+      title: "Event Added",
+      description: "A new event has been added to the timeline.",
     });
   };
 
-  const handleSelectEvent = (event: Event) => {
+  const handleSelectEvent = (event: TimelineEvent) => {
     toast({
-      title: 'Event Selected',
+      title: "Event Selected",
       description: `Selected: ${event.title}`,
     });
   };
@@ -60,14 +47,22 @@ const Index = () => {
           Visualize and analyze the complete attack sequence
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-12rem)]">
-        <Timeline
-          events={events}
-          onAddEvent={handleAddEvent}
-          onSelectEvent={handleSelectEvent}
-        />
-        <Visualization events={events} />
-      </div>
+      <Tabs defaultValue="timeline" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="visualization">Visualization</TabsTrigger>
+        </TabsList>
+        <TabsContent value="timeline" className="h-[calc(100vh-16rem)]">
+          <Timeline
+            events={events}
+            onAddEvent={handleAddEvent}
+            onSelectEvent={handleSelectEvent}
+          />
+        </TabsContent>
+        <TabsContent value="visualization" className="h-[calc(100vh-16rem)]">
+          <Visualization events={events} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
