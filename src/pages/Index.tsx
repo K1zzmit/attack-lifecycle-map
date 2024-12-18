@@ -39,6 +39,16 @@ const Index = () => {
     });
   };
 
+  const handleUpdateEvent = (updatedEvent: TimelineEvent) => {
+    setEvents(events.map(event => 
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+    toast({
+      title: "Event Updated",
+      description: "The event has been successfully updated.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-6">
@@ -57,6 +67,7 @@ const Index = () => {
             events={events}
             onAddEvent={handleAddEvent}
             onSelectEvent={handleSelectEvent}
+            onUpdateEvent={handleUpdateEvent}
           />
         </TabsContent>
         <TabsContent value="visualization" className="h-[calc(100vh-16rem)]">

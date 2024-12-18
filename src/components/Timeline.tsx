@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -26,9 +27,10 @@ interface TimelineProps {
   events: TimelineEvent[];
   onAddEvent: () => void;
   onSelectEvent: (event: TimelineEvent) => void;
+  onUpdateEvent: (event: TimelineEvent) => void;
 }
 
-const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent }) => {
+const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, onUpdateEvent }) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -36,6 +38,13 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent }
     setSelectedEvent(event);
     setIsDialogOpen(true);
     onSelectEvent(event);
+  };
+
+  const handleSave = () => {
+    if (selectedEvent) {
+      onUpdateEvent(selectedEvent);
+      setIsDialogOpen(false);
+    }
   };
 
   return (
@@ -141,6 +150,9 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent }
               />
             </div>
           </div>
+          <DialogFooter>
+            <Button onClick={handleSave}>Save Changes</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
