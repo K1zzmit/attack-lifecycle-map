@@ -5,11 +5,10 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
 
-export interface Artifact {
-  type: 'hostname' | 'domain' | 'file' | 'ip' | 'hash' | 'custom';
-  name: string;
-  value: string;
-  linkedValue?: string; // For joined artifacts (e.g., IP for hostname, hash for file)
+export interface NetworkDetails {
+  proxyIp?: string;
+  port?: string;
+  destinationIp?: string;
 }
 
 export interface TimelineEvent {
@@ -21,6 +20,19 @@ export interface TimelineEvent {
   technique?: string;
   parentId?: string;
   artifacts: Artifact[];
+  // Legacy fields (to maintain compatibility)
+  host?: string;
+  user?: string;
+  process?: string;
+  sha256?: string;
+  networkDetails?: NetworkDetails;
+}
+
+export interface Artifact {
+  type: 'hostname' | 'domain' | 'file' | 'ip' | 'hash' | 'custom';
+  name: string;
+  value: string;
+  linkedValue?: string;
 }
 
 const Index = () => {

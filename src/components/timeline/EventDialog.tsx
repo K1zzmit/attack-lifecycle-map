@@ -19,6 +19,11 @@ interface EventDialogProps {
   events: TimelineEvent[];
   onEventChange: (event: TimelineEvent) => void;
   onSave: () => void;
+  recentValues?: {
+    hosts: string[];
+    users: string[];
+    processes: string[];
+  };
 }
 
 export const EventDialog: React.FC<EventDialogProps> = ({
