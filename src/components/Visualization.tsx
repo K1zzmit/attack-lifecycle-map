@@ -9,6 +9,7 @@ import {
   useNodesState,
   useEdgesState,
   Node,
+  NodeProps,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -17,17 +18,16 @@ interface VisualizationProps {
 }
 
 // Define the type for our node data
-interface NodeData {
+interface CustomNodeData {
   label: React.ReactNode;
   tactic?: string;
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    // Create a map to store node levels
     const nodeLevels = new Map<string, number>();
     const processedNodes = new Set<string>();
     
@@ -59,7 +59,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     });
 
     // Convert events to nodes with calculated positions
-    const newNodes = events.map((event) => {
+    const newNodes: Node<CustomNodeData>[] = events.map((event) => {
       const level = nodeLevels.get(event.id) || 0;
       const nodesAtLevel = nodesByLevel.get(level) || [];
       const indexAtLevel = nodesAtLevel.indexOf(event.id);
@@ -76,6 +76,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
               {event.host && (
                 <div className="text-xs mt-1">
                   <span className="font-medium">Host:</span> {event.host}
+                  {event.hostIp && <span className="ml-1">({event.hostIp})</span>}
                 </div>
               )}
               {event.user && (
@@ -86,11 +87,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
               {event.process && (
                 <div className="text-xs">
                   <span className="font-medium">Process:</span> {event.process}
-                </div>
-              )}
-              {event.sha256 && (
-                <div className="text-xs">
-                  <span className="font-medium">SHA256:</span> {event.sha256.substring(0, 8)}...
+                  {event.sha256 && <div className="text-xs ml-4">SHA256: {event.sha256.substring(0, 8)}...</div>}
                 </div>
               )}
               {event.networkDetails && (
@@ -130,6 +127,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
       };
     });
 
+    setNodes(newNodes);
     // Create a color map for parent events
     const colorMap = new Map();
     const colors = [
@@ -173,14 +171,15 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border"
       >
         <Background />
-        <Controls className="!bg-background !border-border" />
+        <Controls className="!bg-background !border-border !text-foreground" />
         <MiniMap 
           className="!bg-background !border-border" 
-          nodeColor={(node: Node<NodeData>) => {
+          nodeColor={(node) => {
             const colorMap: Record<string, string> = {
-              'Initial Access': '#ff0000',
-              'Execution': '#00ff00',
-              'Persistence': '#0000ff',
+              'Initial Access': '#ef4444',
+              'Execution': '#22c55e',
+              'Persistence': '#3b82f6',
+              'Lateral Movement': '#a855f7',
               // Add more colors for other tactics
             };
             return node.data?.tactic ? colorMap[node.data.tactic] || '#666666' : '#666666';
