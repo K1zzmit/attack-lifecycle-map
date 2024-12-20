@@ -30,8 +30,9 @@ export const EventItem: React.FC<EventItemProps> = ({
         data-depth={depth}
         style={{
           left: '-1.25rem',
-          top: '0',
-          height: isLastEvent ? '50%' : '100%',
+          top: depth === 0 ? '50%' : '0',
+          bottom: isLastEvent ? '50%' : '0',
+          height: 'auto'
         }}
       />
       {/* Horizontal line */}
