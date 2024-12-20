@@ -6,13 +6,15 @@ interface EventItemProps {
   onClick: (event: TimelineEvent) => void;
   parentEvent?: TimelineEvent;
   depth?: number;
+  isLastEvent?: boolean;
 }
 
 export const EventItem: React.FC<EventItemProps> = ({ 
   event, 
   onClick, 
   parentEvent,
-  depth = 0 
+  depth = 0,
+  isLastEvent = false
 }) => {
   // Calculate indentation based on depth
   const indentationStyle: React.CSSProperties = {
@@ -31,7 +33,7 @@ export const EventItem: React.FC<EventItemProps> = ({
             style={{
               left: '-1.25rem',
               top: '0',
-              height: '100%',
+              height: isLastEvent ? '50%' : '100%',
             }}
           />
           {/* Horizontal line */}
