@@ -24,33 +24,28 @@ export const EventItem: React.FC<EventItemProps> = ({
 
   return (
     <div className="relative" style={indentationStyle}>
-      {/* Only show connectors for events with depth > 0 or if it's a parent event */}
-      {(depth > 0 || event.parentId) && (
-        <>
-          {/* Vertical line */}
-          <div 
-            className="timeline-connector absolute" 
-            data-depth={depth}
-            style={{
-              left: '-1.25rem',
-              top: depth === 0 ? '50%' : '0',
-              height: isLastEvent ? '50%' : (depth === 0 ? '50%' : '100%'),
-            }}
-          />
-          {/* Horizontal line */}
-          <div 
-            className="absolute"
-            style={{
-              left: '-1.25rem',
-              top: '50%',
-              width: '1.25rem',
-              height: '2px',
-              background: 'hsl(var(--primary))',
-              opacity: 0.8,
-            }}
-          />
-        </>
-      )}
+      {/* Vertical line */}
+      <div 
+        className="timeline-connector absolute" 
+        data-depth={depth}
+        style={{
+          left: '-1.25rem',
+          top: '0',
+          height: isLastEvent ? '50%' : '100%',
+        }}
+      />
+      {/* Horizontal line */}
+      <div 
+        className="absolute"
+        style={{
+          left: '-1.25rem',
+          top: '50%',
+          width: '1.25rem',
+          height: '2px',
+          background: 'hsl(var(--primary))',
+          opacity: 0.8,
+        }}
+      />
       <div
         className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-lg transition-colors`}
         onClick={() => onClick(event)}
