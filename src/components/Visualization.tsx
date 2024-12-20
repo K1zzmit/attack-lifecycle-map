@@ -9,6 +9,8 @@ import {
   useNodesState,
   useEdgesState,
   Node,
+  NodeProps,
+  GetMiniMapNodeAttribute,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -160,6 +162,16 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     setEdges(newEdges);
   }, [events, setNodes, setEdges]);
 
+  const getNodeColor: GetMiniMapNodeAttribute = (node) => {
+    const colorMap: Record<string, string> = {
+      'Initial Access': '#ff0000',
+      'Execution': '#00ff00',
+      'Persistence': '#0000ff',
+      // Add more colors for other tactics
+    };
+    return colorMap[node.data?.tactic as string] || '#666666';
+  };
+
   return (
     <Card className="h-full bg-background/50 backdrop-blur relative">
       <ReactFlow
@@ -174,15 +186,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         <Controls className="!bg-background !border-border" />
         <MiniMap 
           className="!bg-background !border-border" 
-          nodeColor={(node: Node<NodeData>) => {
-            const colorMap: Record<string, string> = {
-              'Initial Access': '#ff0000',
-              'Execution': '#00ff00',
-              'Persistence': '#0000ff',
-              // Add more colors for other tactics
-            };
-            return node.data?.tactic ? colorMap[node.data.tactic] || '#666666' : '#666666';
-          }}
+          nodeColor={getNodeColor}
         />
       </ReactFlow>
     </Card>
