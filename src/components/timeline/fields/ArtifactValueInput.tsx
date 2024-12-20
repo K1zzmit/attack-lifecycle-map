@@ -32,7 +32,7 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
   const [open, setOpen] = useState(false);
 
   // If we don't have recent values, show a regular input
-  if (recentValues.length === 0) {
+  if (!recentValues || recentValues.length === 0) {
     return (
       <Input
         placeholder="Value"
@@ -57,7 +57,7 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput 
             placeholder="Search or enter new value..."
             value={value}
@@ -68,9 +68,8 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
             {recentValues.map((item) => (
               <CommandItem
                 key={item}
-                value={item}
-                onSelect={(currentValue) => {
-                  onChange(currentValue);
+                onSelect={() => {
+                  onChange(item);
                   setOpen(false);
                 }}
               >
