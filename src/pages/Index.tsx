@@ -14,7 +14,6 @@ export interface TimelineEvent {
   technique?: string;
   parentId?: string;
   host?: string;
-  hostIp?: string;
   user?: string;
   process?: string;
   commandLine?: string;

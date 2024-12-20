@@ -8,8 +8,6 @@ import {
   Background,
   useNodesState,
   useEdgesState,
-  Node,
-  Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -17,17 +15,12 @@ interface VisualizationProps {
   events: TimelineEvent[];
 }
 
-interface CustomNodeData {
-  label: React.ReactNode;
-  tactic?: string;
-  [key: string]: unknown;
-}
-
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeData>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
+    // Create a map to store node levels
     const nodeLevels = new Map<string, number>();
     const processedNodes = new Set<string>();
     
@@ -44,7 +37,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         .forEach(child => calculateLevels(child.id, level + 1));
     };
 
-    // Find root nodes and calculate their subtrees
+    // Find root nodes (nodes without parents) and calculate their subtrees
     events
       .filter(event => !event.parentId)
       .forEach(rootEvent => calculateLevels(rootEvent.id, 0));
@@ -59,7 +52,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     });
 
     // Convert events to nodes with calculated positions
-    const newNodes = events.map((event): Node<CustomNodeData> => {
+    const newNodes = events.map((event) => {
       const level = nodeLevels.get(event.id) || 0;
       const nodesAtLevel = nodesByLevel.get(level) || [];
       const indexAtLevel = nodesAtLevel.indexOf(event.id);
@@ -76,7 +69,6 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
               {event.host && (
                 <div className="text-xs mt-1">
                   <span className="font-medium">Host:</span> {event.host}
-                  {event.hostIp && <span className="ml-1">({event.hostIp})</span>}
                 </div>
               )}
               {event.user && (
@@ -87,7 +79,11 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
               {event.process && (
                 <div className="text-xs">
                   <span className="font-medium">Process:</span> {event.process}
-                  {event.sha256 && <div className="text-xs ml-4">SHA256: {event.sha256.substring(0, 8)}...</div>}
+                </div>
+              )}
+              {event.sha256 && (
+                <div className="text-xs">
+                  <span className="font-medium">SHA256:</span> {event.sha256.substring(0, 8)}...
                 </div>
               )}
               {event.networkDetails && (
@@ -111,8 +107,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
                 </div>
               )}
             </div>
-          ),
-          tactic: event.tactic
+          )
         },
         position: { 
           x: indexAtLevel * spacing, 
@@ -127,15 +122,32 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
       };
     });
 
-    // Create edges
+    // Create a color map for parent events
+    const colorMap = new Map();
+    const colors = [
+      'rgb(59, 130, 246)', // blue
+      'rgb(16, 185, 129)', // green
+      'rgb(239, 68, 68)',  // red
+      'rgb(217, 70, 239)', // purple
+      'rgb(245, 158, 11)', // orange
+    ];
+    let colorIndex = 0;
+
+    events.forEach(event => {
+      if (event.parentId && !colorMap.has(event.parentId)) {
+        colorMap.set(event.parentId, colors[colorIndex % colors.length]);
+        colorIndex++;
+      }
+    });
+
     const newEdges = events
       .filter(event => event.parentId)
-      .map((event): Edge => ({
+      .map(event => ({
         id: `${event.parentId}-${event.id}`,
         source: event.parentId!,
         target: event.id,
         animated: true,
-        style: { stroke: 'rgb(148, 163, 184)' },
+        style: { stroke: colorMap.get(event.parentId) || 'rgb(148, 163, 184)' },
       }));
 
     setNodes(newNodes);
@@ -153,18 +165,17 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border"
       >
         <Background />
-        <Controls className="!bg-background !border-border !text-foreground" />
+        <Controls className="!bg-background !border-border" />
         <MiniMap 
           className="!bg-background !border-border" 
           nodeColor={(node) => {
-            const data = node.data as CustomNodeData;
             const colorMap: Record<string, string> = {
-              'Initial Access': '#ef4444',
-              'Execution': '#22c55e',
-              'Persistence': '#3b82f6',
-              'Lateral Movement': '#a855f7',
+              'Initial Access': '#ff0000',
+              'Execution': '#00ff00',
+              'Persistence': '#0000ff',
+              // Add more colors for other tactics
             };
-            return data?.tactic ? colorMap[data.tactic] || '#666666' : '#666666';
+            return node.data?.tactic ? colorMap[node.data.tactic] || '#666666' : '#666666';
           }}
         />
       </ReactFlow>

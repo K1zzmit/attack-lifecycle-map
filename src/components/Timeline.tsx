@@ -25,18 +25,6 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     onSelectEvent(event);
   };
 
-  const handleAddLinkedEvent = (parentEvent: TimelineEvent) => {
-    const newEvent = {
-      ...parentEvent,
-      id: crypto.randomUUID(),
-      parentId: parentEvent.id,
-      timestamp: new Date().toISOString().slice(0, 16),
-      title: `Connected to: ${parentEvent.title}`,
-      description: '',
-    };
-    onUpdateEvent(newEvent);
-  };
-
   const handleSave = () => {
     if (selectedEvent) {
       onUpdateEvent(selectedEvent);
@@ -51,26 +39,6 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     processes: [...new Set(events.map(e => e.process).filter(Boolean) as string[])],
   };
 
-  // Recursive function to render events with their children
-  const renderEventWithChildren = (event: TimelineEvent, depth: number = 0) => {
-    const childEvents = events.filter(e => e.parentId === event.id);
-    return (
-      <React.Fragment key={event.id}>
-        <EventItem
-          event={event}
-          onClick={handleEventClick}
-          onAddLinkedEvent={handleAddLinkedEvent}
-          parentEvent={events.find(e => e.id === event.parentId)}
-          depth={depth}
-        />
-        {childEvents.map(childEvent => renderEventWithChildren(childEvent, depth + 1))}
-      </React.Fragment>
-    );
-  };
-
-  // Get root events (events without parents)
-  const rootEvents = events.filter(event => !event.parentId);
-
   return (
     <>
       <Card className="h-full bg-background/50 backdrop-blur">
@@ -84,7 +52,14 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
         <ScrollArea className="h-[calc(100vh-10rem)] p-4">
           <div className="relative">
             <div className="timeline-connector" />
-            {rootEvents.map(event => renderEventWithChildren(event))}
+            {events.map((event) => (
+              <EventItem
+                key={event.id}
+                event={event}
+                onClick={handleEventClick}
+                parentEvent={events.find(e => e.id === event.parentId)}
+              />
+            ))}
           </div>
         </ScrollArea>
       </Card>

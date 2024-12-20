@@ -1,7 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MITRE_TACTICS_AND_TECHNIQUES } from "@/lib/mitre";
-import { TACTIC_TEMPLATES } from "@/lib/mitre-config";
 import { TimelineEvent } from "@/pages/Index";
 
 interface MitreTacticFieldProps {
@@ -18,6 +17,7 @@ export const MitreTacticField: React.FC<MitreTacticFieldProps> = ({ event, onEve
         onValueChange={(value) => onEventChange({ 
           ...event, 
           tactic: value,
+          // Clear technique when tactic changes
           technique: undefined 
         })}
       >
@@ -27,14 +27,7 @@ export const MitreTacticField: React.FC<MitreTacticFieldProps> = ({ event, onEve
         <SelectContent>
           {Object.keys(MITRE_TACTICS_AND_TECHNIQUES).map((tactic) => (
             <SelectItem key={tactic} value={tactic}>
-              <div>
-                <div>{tactic}</div>
-                {TACTIC_TEMPLATES[tactic] && (
-                  <div className="text-xs text-muted-foreground">
-                    {TACTIC_TEMPLATES[tactic].description}
-                  </div>
-                )}
-              </div>
+              {tactic}
             </SelectItem>
           ))}
         </SelectContent>
