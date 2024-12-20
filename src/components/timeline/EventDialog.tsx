@@ -4,6 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -86,10 +87,18 @@ export const EventDialog: React.FC<EventDialogProps> = ({
     });
   };
 
+  const handleArtifactValueChange = (value: string) => {
+    console.log('EventDialog handleArtifactValueChange:', value);
+    setNewArtifactValue(value);
+  };
+
   return (
     <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Edit Event</DialogTitle>
+        <DialogDescription>
+          Add or modify event details and artifacts
+        </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid gap-2">
@@ -178,7 +187,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
             artifactLinkedValue={newArtifactLinkedValue}
             onTypeChange={setNewArtifactType}
             onNameChange={setNewArtifactName}
-            onValueChange={setNewArtifactValue}
+            onValueChange={handleArtifactValueChange}
             onLinkedValueChange={setNewArtifactLinkedValue}
             onAdd={handleAddArtifact}
             recentArtifacts={recentArtifacts}
