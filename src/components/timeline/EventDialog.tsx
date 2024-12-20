@@ -67,7 +67,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
                 <SelectValue placeholder="Select host" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">New Host...</SelectItem>
+                <SelectItem value="new_host">New Host...</SelectItem>
                 {recentValues.hosts.map((host) => (
                   <SelectItem key={host} value={host}>
                     {host}
@@ -75,9 +75,9 @@ export const EventDialog: React.FC<EventDialogProps> = ({
                 ))}
               </SelectContent>
             </Select>
-            {!recentValues.hosts.includes(event.host || '') && event.host && (
+            {(event.host === 'new_host' || (!recentValues.hosts.includes(event.host || '') && event.host)) && (
               <Input
-                value={event.host}
+                value={event.host === 'new_host' ? '' : (event.host || '')}
                 onChange={(e) => onEventChange({ ...event, host: e.target.value })}
                 placeholder="Enter new host"
               />
@@ -93,7 +93,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
                 <SelectValue placeholder="Select user" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">New User...</SelectItem>
+                <SelectItem value="new_user">New User...</SelectItem>
                 {recentValues.users.map((user) => (
                   <SelectItem key={user} value={user}>
                     {user}
@@ -101,9 +101,9 @@ export const EventDialog: React.FC<EventDialogProps> = ({
                 ))}
               </SelectContent>
             </Select>
-            {!recentValues.users.includes(event.user || '') && event.user && (
+            {(event.user === 'new_user' || (!recentValues.users.includes(event.user || '') && event.user)) && (
               <Input
-                value={event.user}
+                value={event.user === 'new_user' ? '' : (event.user || '')}
                 onChange={(e) => onEventChange({ ...event, user: e.target.value })}
                 placeholder="Enter new user"
               />
@@ -120,7 +120,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
               <SelectValue placeholder="Select process" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">New Process...</SelectItem>
+              <SelectItem value="new_process">New Process...</SelectItem>
               {recentValues.processes.map((process) => (
                 <SelectItem key={process} value={process}>
                   {process}
@@ -128,9 +128,9 @@ export const EventDialog: React.FC<EventDialogProps> = ({
               ))}
             </SelectContent>
           </Select>
-          {!recentValues.processes.includes(event.process || '') && event.process && (
+          {(event.process === 'new_process' || (!recentValues.processes.includes(event.process || '') && event.process)) && (
             <Input
-              value={event.process}
+              value={event.process === 'new_process' ? '' : (event.process || '')}
               onChange={(e) => onEventChange({ ...event, process: e.target.value })}
               placeholder="Enter new process"
             />
