@@ -1,17 +1,21 @@
 import React from 'react';
 import type { TimelineEvent } from '@/pages/Index';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { Trash2 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface EventItemProps {
   event: TimelineEvent;
   onClick: (event: TimelineEvent) => void;
+  onDelete: (eventId: string) => void;
   parentEvent?: TimelineEvent;
   depth?: number;
 }
 
 export const EventItem: React.FC<EventItemProps> = ({ 
   event, 
-  onClick, 
+  onClick,
+  onDelete,
   parentEvent,
   depth = 0,
 }) => {
@@ -66,6 +70,11 @@ export const EventItem: React.FC<EventItemProps> = ({
     return colorPalette.pairs[0];
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event click handler from firing
+    onDelete(event.id);
+  };
+
   return (
     <div 
       className="relative" 
@@ -75,7 +84,7 @@ export const EventItem: React.FC<EventItemProps> = ({
       {...listeners}
     >
       <div
-        className={`timeline-event mb-4 animate-fade-in p-4 rounded-none transition-all duration-200 ${
+        className={`timeline-event mb-4 animate-fade-in p-4 rounded-none transition-all duration-200 group ${
           isOver ? 'scale-95 shadow-lg ring-2 ring-primary' : ''
         }`}
         onClick={() => onClick(event)}
@@ -90,40 +99,53 @@ export const EventItem: React.FC<EventItemProps> = ({
           transform: isOver ? 'translateY(-4px)' : 'none',
         }}
       >
-        <div className="text-sm text-muted-foreground">{event.timestamp}</div>
-        <div className="font-medium">{event.title || "New Event"}</div>
-        
-        {event.artifacts?.length > 0 && (
-          <div className="mt-2 space-y-1">
-            {event.artifacts.map((artifact, index) => (
-              <div key={index} className="text-sm">
-                <span className="font-medium">{artifact.name}:</span>{' '}
-                {artifact.value}
-                {artifact.linkedValue && (
-                  <span className="text-muted-foreground">
-                    {' '}→ {artifact.linkedValue}
-                  </span>
-                )}
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <div className="text-sm text-muted-foreground">{event.timestamp}</div>
+            <div className="font-medium">{event.title || "New Event"}</div>
+            
+            {event.artifacts?.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {event.artifacts.map((artifact, index) => (
+                  <div key={index} className="text-sm">
+                    <span className="font-medium">{artifact.name}:</span>{' '}
+                    {artifact.value}
+                    {artifact.linkedValue && (
+                      <span className="text-muted-foreground">
+                        {' '}→ {artifact.linkedValue}
+                      </span>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        <div className="text-sm mt-1">{event.description}</div>
-        
-        {event.technique && (
-          <div className="mt-2">
-            <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
-              {event.technique}
-            </span>
+            <div className="text-sm mt-1">{event.description}</div>
+            
+            {event.technique && (
+              <div className="mt-2">
+                <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
+                  {event.technique}
+                </span>
+              </div>
+            )}
+            
+            {parentEvent && (
+              <div className="mt-2 text-xs text-muted-foreground">
+                Connected to: {parentEvent.title || 'Unknown Event'}
+              </div>
+            )}
           </div>
-        )}
-        
-        {parentEvent && (
-          <div className="mt-2 text-xs text-muted-foreground">
-            Connected to: {parentEvent.title || 'Unknown Event'}
-          </div>
-        )}
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            className="opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
+          </Button>
+        </div>
       </div>
     </div>
   );

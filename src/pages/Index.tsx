@@ -71,6 +71,10 @@ const Index = () => {
     });
   };
 
+  const handleDeleteEvent = (eventId: string) => {
+    setEvents(events.filter(event => event.id !== eventId));
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-6">
@@ -90,6 +94,7 @@ const Index = () => {
             onAddEvent={handleAddEvent}
             onSelectEvent={handleSelectEvent}
             onUpdateEvent={handleUpdateEvent}
+            onDeleteEvent={handleDeleteEvent}
           />
         </TabsContent>
         <TabsContent value="visualization" className="h-[calc(100vh-16rem)]">

@@ -15,14 +15,20 @@ interface TimelineProps {
   onAddEvent: () => void;
   onSelectEvent: (event: TimelineEvent) => void;
   onUpdateEvent: (event: TimelineEvent) => void;
+  onDeleteEvent?: (eventId: string) => void;
 }
 
-const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, onUpdateEvent }) => {
+const Timeline: React.FC<TimelineProps> = ({ 
+  events, 
+  onAddEvent, 
+  onSelectEvent, 
+  onUpdateEvent,
+  onDeleteEvent 
+}) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  // Configure DnD sensors
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -44,7 +50,26 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     }
   };
 
-  // Function to calculate event depth
+  const handleDelete = (eventId: string) => {
+    // Check if the event has children
+    const hasChildren = events.some(event => event.parentId === eventId);
+    
+    if (hasChildren) {
+      toast({
+        title: "Cannot Delete Event",
+        description: "Please delete or reassign child events first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onDeleteEvent?.(eventId);
+    toast({
+      title: "Event Deleted",
+      description: "The event has been successfully removed",
+    });
+  };
+
   const getEventDepth = (event: TimelineEvent): number => {
     let depth = 0;
     let currentEvent = event;
@@ -122,6 +147,7 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
                   key={event.id}
                   event={event}
                   onClick={handleEventClick}
+                  onDelete={handleDelete}
                   parentEvent={events.find(e => e.id === event.parentId)}
                   depth={event.depth}
                 />
