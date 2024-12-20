@@ -32,6 +32,27 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     }
   };
 
+  // Function to calculate event depth
+  const getEventDepth = (event: TimelineEvent): number => {
+    let depth = 0;
+    let currentEvent = event;
+    
+    while (currentEvent.parentId) {
+      const parentEvent = events.find(e => e.id === currentEvent.parentId);
+      if (!parentEvent) break;
+      depth++;
+      currentEvent = parentEvent;
+    }
+    
+    return depth;
+  };
+
+  // Organize events by their relationships
+  const organizedEvents = events.map(event => ({
+    ...event,
+    depth: getEventDepth(event),
+  }));
+
   return (
     <>
       <Card className="h-full bg-background/50 backdrop-blur">
@@ -44,13 +65,13 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
         </div>
         <ScrollArea className="h-[calc(100vh-10rem)] p-4">
           <div className="relative">
-            <div className="timeline-connector" />
-            {events.map((event) => (
+            {organizedEvents.map((event) => (
               <EventItem
                 key={event.id}
                 event={event}
                 onClick={handleEventClick}
                 parentEvent={events.find(e => e.id === event.parentId)}
+                depth={event.depth}
               />
             ))}
           </div>
