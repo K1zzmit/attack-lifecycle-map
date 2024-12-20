@@ -38,8 +38,21 @@ export function Combobox({
   const handleSelect = (item: string) => {
     onSelect(item);
     onInputChange(item);
-    setOpen(false);
     setSearch("");
+    setOpen(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setSearch(newValue);
+    onInputChange(newValue);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && search) {
+      e.preventDefault();
+      handleSelect(search);
+    }
   };
 
   return (
@@ -60,36 +73,34 @@ export function Combobox({
           <Input
             placeholder="Search or enter new value..."
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
+            onChange={handleInputChange}
+            onKeyDown={handleInputKeyDown}
             className="mb-2"
           />
           <ScrollArea className="h-[200px]">
-            {filteredItems.length === 0 ? (
+            {filteredItems.length === 0 && search && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                No matching value found.
-              </div>
-            ) : (
-              <div className="space-y-1">
-                {filteredItems.map((item) => (
-                  <Button
-                    key={item}
-                    variant="ghost"
-                    className="w-full justify-start font-normal"
-                    onClick={() => handleSelect(item)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === item ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {item}
-                  </Button>
-                ))}
+                Press Enter to add "{search}"
               </div>
             )}
+            <div className="space-y-1">
+              {filteredItems.map((item) => (
+                <Button
+                  key={item}
+                  variant="ghost"
+                  className="w-full justify-start font-normal"
+                  onClick={() => handleSelect(item)}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === item ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {item}
+                </Button>
+              ))}
+            </div>
           </ScrollArea>
         </PopoverContent>
       </Popover>
