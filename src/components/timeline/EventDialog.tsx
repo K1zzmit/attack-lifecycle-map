@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { TimelineEvent, Artifact } from '@/pages/Index';
 import { MitreTacticField } from './fields/MitreTacticField';
-import { Plus, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { ArtifactField } from './fields/ArtifactField';
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -38,6 +39,23 @@ export const EventDialog: React.FC<EventDialogProps> = ({
   const [newArtifactLinkedValue, setNewArtifactLinkedValue] = useState('');
 
   if (!event) return null;
+
+  // Collect recent artifacts by type
+  const recentArtifacts = events.reduce((acc, evt) => {
+    evt.artifacts?.forEach(artifact => {
+      if (!acc[artifact.type]) {
+        acc[artifact.type] = [];
+      }
+      const existingArtifact = acc[artifact.type].find(a => a.value === artifact.value);
+      if (!existingArtifact) {
+        acc[artifact.type].push({
+          value: artifact.value,
+          linkedValue: artifact.linkedValue,
+        });
+      }
+    });
+    return acc;
+  }, {} as { [key: string]: { value: string; linkedValue?: string }[] });
 
   const handleAddArtifact = () => {
     if (!newArtifactName || !newArtifactValue) return;
@@ -153,51 +171,18 @@ export const EventDialog: React.FC<EventDialogProps> = ({
             ))}
           </div>
 
-          <div className="grid gap-2">
-            <div className="grid grid-cols-2 gap-2">
-              <Select
-                value={newArtifactType}
-                onValueChange={(value: Artifact['type']) => setNewArtifactType(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hostname">Hostname</SelectItem>
-                  <SelectItem value="domain">Domain</SelectItem>
-                  <SelectItem value="file">File</SelectItem>
-                  <SelectItem value="ip">IP</SelectItem>
-                  <SelectItem value="hash">Hash</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
-                </SelectContent>
-              </Select>
-              <Input
-                placeholder="Artifact name"
-                value={newArtifactName}
-                onChange={(e) => setNewArtifactName(e.target.value)}
-              />
-            </div>
-            <Input
-              placeholder="Value"
-              value={newArtifactValue}
-              onChange={(e) => setNewArtifactValue(e.target.value)}
-            />
-            {(newArtifactType === 'hostname' || newArtifactType === 'domain' || newArtifactType === 'file') && (
-              <Input
-                placeholder={
-                  newArtifactType === 'hostname' || newArtifactType === 'domain'
-                    ? 'IP Address'
-                    : 'File Hash'
-                }
-                value={newArtifactLinkedValue}
-                onChange={(e) => setNewArtifactLinkedValue(e.target.value)}
-              />
-            )}
-            <Button onClick={handleAddArtifact} type="button" className="w-full">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Artifact
-            </Button>
-          </div>
+          <ArtifactField
+            artifactType={newArtifactType}
+            artifactName={newArtifactName}
+            artifactValue={newArtifactValue}
+            artifactLinkedValue={newArtifactLinkedValue}
+            onTypeChange={setNewArtifactType}
+            onNameChange={setNewArtifactName}
+            onValueChange={setNewArtifactValue}
+            onLinkedValueChange={setNewArtifactLinkedValue}
+            onAdd={handleAddArtifact}
+            recentArtifacts={recentArtifacts}
+          />
         </div>
       </div>
       <DialogFooter>
