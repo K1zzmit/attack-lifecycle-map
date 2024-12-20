@@ -17,7 +17,6 @@ interface VisualizationProps {
   events: TimelineEvent[];
 }
 
-// Define the type for our node data
 interface CustomNodeData {
   label: React.ReactNode;
   tactic?: string;
@@ -45,7 +44,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         .forEach(child => calculateLevels(child.id, level + 1));
     };
 
-    // Find root nodes (nodes without parents) and calculate their subtrees
+    // Find root nodes and calculate their subtrees
     events
       .filter(event => !event.parentId)
       .forEach(rootEvent => calculateLevels(rootEvent.id, 0));
