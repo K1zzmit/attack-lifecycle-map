@@ -38,45 +38,14 @@ export const EventItem: React.FC<EventItemProps> = ({
 
   return (
     <div className="relative" style={indentationStyle}>
-      {depth > 0 && (
-        <>
-          {/* Vertical connector */}
-          <div 
-            className="absolute"
-            style={{
-              left: '-1rem',
-              top: '-1rem',
-              width: '1px',
-              height: 'calc(100% + 1rem)', // Adjusted to connect precisely
-              background: borderColor,
-              opacity: 0.8,
-              pointerEvents: 'none',
-              zIndex: 0,
-            }}
-          />
-          {/* Horizontal connector */}
-          <div 
-            className="absolute"
-            style={{
-              left: '-1rem',
-              top: '1.5rem',
-              width: '1rem',
-              height: '1px',
-              background: borderColor,
-              opacity: 0.8,
-              pointerEvents: 'none',
-              zIndex: 1,
-            }}
-          />
-        </>
-      )}
       <div
-        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none`}
+        className="timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none"
         onClick={() => onClick(event)}
         style={{
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: borderColor,
+          borderLeft: `4px solid ${borderColor}`,
+          borderTop: '1px solid hsl(var(--border))',
+          borderRight: '1px solid hsl(var(--border))',
+          borderBottom: '1px solid hsl(var(--border))',
           position: 'relative',
           zIndex: 2,
           background: 'hsl(var(--card))',
