@@ -15,10 +15,10 @@ export const EventItem: React.FC<EventItemProps> = ({
   depth = 0 
 }) => {
   // Calculate indentation based on depth
-  const indentationStyle = {
+  const indentationStyle: React.CSSProperties = {
     marginLeft: `${depth * 2}rem`,
     borderLeftWidth: depth > 0 ? '2px' : '0',
-    borderLeftStyle: 'solid',
+    borderLeftStyle: depth > 0 ? 'solid' : undefined,
     borderLeftColor: 'hsl(var(--border))',
     paddingLeft: depth > 0 ? '1rem' : '0',
   };
