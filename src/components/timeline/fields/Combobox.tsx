@@ -25,13 +25,11 @@ interface ComboboxProps {
 
 export function Combobox({ items = [], value, onSelect, onInputChange, placeholder }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
-  const safeItems = items || [];
+  const safeItems = Array.isArray(items) ? items : [];
 
   const handleSelect = React.useCallback((currentValue: string) => {
-    if (currentValue) {
-      onSelect(currentValue);
-      setOpen(false);
-    }
+    onSelect(currentValue);
+    setOpen(false);
   }, [onSelect]);
 
   return (
@@ -60,7 +58,7 @@ export function Combobox({ items = [], value, onSelect, onInputChange, placehold
               <CommandItem
                 key={item}
                 value={item}
-                onSelect={handleSelect}
+                onSelect={() => handleSelect(item)}
               >
                 <Check
                   className={cn(
