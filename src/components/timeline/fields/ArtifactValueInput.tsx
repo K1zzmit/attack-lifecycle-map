@@ -29,6 +29,7 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
   recentValues,
 }) => {
   const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(value);
 
   // If we have recent values, show the combobox
   if (recentValues.length > 0) {
@@ -49,15 +50,32 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
           <Command>
             <CommandInput 
               placeholder="Search or enter new value..."
-              value={value}
+              value={inputValue}
+              onValueChange={(v) => {
+                setInputValue(v);
+                onChange(v);
+              }}
             />
-            <CommandEmpty>No value found. Type to add new.</CommandEmpty>
+            <CommandEmpty>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-left"
+                onClick={() => {
+                  onChange(inputValue);
+                  setOpen(false);
+                }}
+              >
+                Use "{inputValue}"
+              </Button>
+            </CommandEmpty>
             <CommandGroup>
               {recentValues.map((item) => (
                 <CommandItem
                   key={item}
-                  onSelect={() => {
-                    onChange(item);
+                  value={item}
+                  onSelect={(currentValue) => {
+                    onChange(currentValue);
+                    setInputValue(currentValue);
                     setOpen(false);
                   }}
                 >
