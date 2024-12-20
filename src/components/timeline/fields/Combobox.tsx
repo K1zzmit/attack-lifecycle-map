@@ -36,7 +36,6 @@ export function Combobox({
   }, [items, search]);
 
   const handleSelect = (selectedValue: string) => {
-    console.log("Combobox handleSelect:", selectedValue);
     onSelect(selectedValue);
     onInputChange(selectedValue);
     setSearch("");

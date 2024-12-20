@@ -34,7 +34,6 @@ export const ArtifactField: React.FC<ArtifactFieldProps> = ({
   recentArtifacts,
 }) => {
   const handleValueSelect = (selectedValue: string) => {
-    console.log("ArtifactField handleValueSelect:", selectedValue);
     const artifact = recentArtifacts[artifactType]?.find(a => a.value === selectedValue);
     onValueChange(selectedValue);
     if (artifact?.linkedValue) {
@@ -93,7 +92,12 @@ export const ArtifactField: React.FC<ArtifactFieldProps> = ({
         />
       )}
 
-      <Button onClick={onAdd} type="button" className="w-full">
+      <Button 
+        onClick={onAdd} 
+        type="button" 
+        className="w-full"
+        disabled={!artifactName || !artifactValue}
+      >
         <Plus className="w-4 h-4 mr-2" />
         Add Artifact
       </Button>
