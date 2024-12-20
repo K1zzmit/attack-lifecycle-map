@@ -8,11 +8,17 @@ import {
   Background,
   useNodesState,
   useEdgesState,
+  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 interface VisualizationProps {
   events: TimelineEvent[];
+}
+
+interface NodeData {
+  label: React.ReactNode;
+  tactic?: string;
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
@@ -168,7 +174,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         <Controls className="!bg-background !border-border" />
         <MiniMap 
           className="!bg-background !border-border" 
-          nodeColor={(node) => {
+          nodeColor={(node: Node<NodeData>) => {
             const colorMap: Record<string, string> = {
               'Initial Access': '#ff0000',
               'Execution': '#00ff00',
