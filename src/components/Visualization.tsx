@@ -123,7 +123,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     });
 
     // Create a color map for parent events
-    const colorMap = new Map();
+    const colorMap = new Map<string, string>();
     const colors = [
       'rgb(59, 130, 246)', // blue
       'rgb(16, 185, 129)', // green
@@ -147,7 +147,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         source: event.parentId!,
         target: event.id,
         animated: true,
-        style: { stroke: colorMap.get(event.parentId) || 'rgb(148, 163, 184)' },
+        style: { stroke: event.parentId ? colorMap.get(event.parentId) || 'rgb(148, 163, 184)' : 'rgb(148, 163, 184)' },
       }));
 
     setNodes(newNodes);
