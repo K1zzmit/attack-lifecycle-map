@@ -18,7 +18,7 @@ export const EventItem: React.FC<EventItemProps> = ({
 }) => {
   // Calculate indentation based on depth
   const indentationStyle: React.CSSProperties = {
-    marginLeft: `${depth * 2.5}rem`,
+    marginLeft: `${depth * 2}rem`,
     position: 'relative',
   };
 
@@ -26,29 +26,17 @@ export const EventItem: React.FC<EventItemProps> = ({
   const getBorderColor = (depth: number) => {
     switch(depth) {
       case 0:
-        return 'border-[#ea384c]'; // Red for parent
-      case 1:
-        return 'border-[#0EA5E9]'; // Blue for first level
-      case 2:
-        return 'border-[#F97316]'; // Yellow/Orange for second level
-      default:
-        return 'border-[#0EA5E9]'; // Blue for deeper levels
-    }
-  };
-
-  // Get connector color based on depth
-  const getConnectorColor = (depth: number) => {
-    switch(depth) {
-      case 0:
         return '#ea384c'; // Red for parent
       case 1:
         return '#0EA5E9'; // Blue for first level
       case 2:
-        return '#F97316'; // Yellow/Orange for second level
+        return '#F97316'; // Orange for second level
       default:
         return '#0EA5E9'; // Blue for deeper levels
     }
   };
+
+  const borderColor = getBorderColor(depth);
 
   return (
     <div className="relative" style={indentationStyle}>
@@ -58,11 +46,11 @@ export const EventItem: React.FC<EventItemProps> = ({
           <div 
             className="absolute"
             style={{
-              left: '-1.25rem',
+              left: '-1rem',
               top: '-1rem',
-              width: '2px',
+              width: '1px',
               height: '100%',
-              background: getConnectorColor(depth),
+              background: borderColor,
               opacity: 0.8,
             }}
           />
@@ -70,20 +58,24 @@ export const EventItem: React.FC<EventItemProps> = ({
           <div 
             className="absolute"
             style={{
-              left: '-1.25rem',
+              left: '-1rem',
               top: '1.5rem',
-              width: '1.25rem',
-              height: '2px',
-              background: getConnectorColor(depth),
+              width: '1rem',
+              height: '1px',
+              background: borderColor,
               opacity: 0.8,
             }}
           />
         </>
       )}
       <div
-        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none border-2 ${getBorderColor(depth)}`}
+        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none`}
         onClick={() => onClick(event)}
-        data-depth={depth}
+        style={{
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: borderColor,
+        }}
       >
         <div className="text-sm text-muted-foreground">{event.timestamp}</div>
         <div className="font-medium">{event.title || "New Event"}</div>

@@ -41,41 +41,16 @@
   color: #888;
 }
 
-.timeline-connector {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: hsl(var(--primary));
-  opacity: 0.3;
-}
-
 .timeline-event {
   position: relative;
   padding: 1rem;
-  border-radius: 0.5rem;
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
   cursor: pointer;
   transition: all 0.2s ease-out;
 }
 
 .timeline-event:hover {
-  transform: translateX(4px);
-  border-color: hsl(var(--primary));
-}
-
-.timeline-event::before {
-  content: '';
-  position: absolute;
-  left: -25px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: hsl(var(--primary));
+  background: hsl(var(--card)/0.8);
 }
 
 @keyframes fade-in {
