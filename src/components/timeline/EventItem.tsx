@@ -47,11 +47,11 @@ export const EventItem: React.FC<EventItemProps> = ({
               left: '-1rem',
               top: '-1rem',
               width: '1px',
-              height: '200%', // Extended to connect with siblings
+              height: 'calc(100% + 1rem)', // Adjusted to connect precisely
               background: borderColor,
               opacity: 0.8,
-              pointerEvents: 'none', // Ensure it doesn't interfere with clicks
-              zIndex: 0, // Place behind events
+              pointerEvents: 'none',
+              zIndex: 0,
             }}
           />
           {/* Horizontal connector */}
@@ -78,7 +78,7 @@ export const EventItem: React.FC<EventItemProps> = ({
           borderStyle: 'solid',
           borderColor: borderColor,
           position: 'relative',
-          zIndex: 2, // Place above connectors
+          zIndex: 2,
           background: 'hsl(var(--card))',
         }}
       >
