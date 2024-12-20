@@ -16,13 +16,11 @@ export const EventItem: React.FC<EventItemProps> = ({
   depth = 0,
   isLastEvent = false
 }) => {
-  // Calculate indentation based on depth
   const indentationStyle: React.CSSProperties = {
     marginLeft: `${depth * 2}rem`,
     position: 'relative',
   };
 
-  // Get border color based on depth
   const getBorderColor = (depth: number) => {
     switch(depth) {
       case 0:
@@ -49,9 +47,11 @@ export const EventItem: React.FC<EventItemProps> = ({
               left: '-1rem',
               top: '-1rem',
               width: '1px',
-              height: '100%',
+              height: '200%', // Extended to connect with siblings
               background: borderColor,
               opacity: 0.8,
+              pointerEvents: 'none', // Ensure it doesn't interfere with clicks
+              zIndex: 0, // Place behind events
             }}
           />
           {/* Horizontal connector */}
@@ -64,6 +64,8 @@ export const EventItem: React.FC<EventItemProps> = ({
               height: '1px',
               background: borderColor,
               opacity: 0.8,
+              pointerEvents: 'none',
+              zIndex: 1,
             }}
           />
         </>
@@ -75,6 +77,9 @@ export const EventItem: React.FC<EventItemProps> = ({
           borderWidth: '1px',
           borderStyle: 'solid',
           borderColor: borderColor,
+          position: 'relative',
+          zIndex: 2, // Place above connectors
+          background: 'hsl(var(--card))',
         }}
       >
         <div className="text-sm text-muted-foreground">{event.timestamp}</div>
