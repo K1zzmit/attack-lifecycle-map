@@ -38,20 +38,33 @@ export const EventItem: React.FC<EventItemProps> = ({
     zIndex: isDragging ? 50 : 1,
   };
 
-  const getBorderColor = (depth: number) => {
-    switch(depth) {
-      case 0:
-        return '#ea384c'; // Red for parent
-      case 1:
-        return '#0EA5E9'; // Blue for first level
-      case 2:
-        return '#F97316'; // Orange for second level
-      default:
-        return '#0EA5E9'; // Blue for deeper levels
-    }
-  };
+  const getBorderColor = (depth: number, parentId?: string) => {
+    // Color palette for different depths and parent relationships
+    const colorPalette = {
+      root: '#ea384c',      // Red for root events
+      pairs: [
+        '#0EA5E9',         // Ocean Blue
+        '#F97316',         // Bright Orange
+        '#8B5CF6',         // Vivid Purple
+        '#D946EF',         // Magenta Pink
+        '#9b87f5',         // Primary Purple
+        '#7E69AB',         // Secondary Purple
+        '#6E59A5',         // Tertiary Purple
+      ]
+    };
 
-  const borderColor = getBorderColor(depth);
+    if (depth === 0) return colorPalette.root;
+    
+    // Use the parent ID to determine the color index
+    // This ensures children of the same parent share the same color
+    if (parentId) {
+      const colorIndex = parseInt(parentId.slice(-3), 16) % colorPalette.pairs.length;
+      return colorPalette.pairs[colorIndex];
+    }
+
+    // Fallback color if no parent ID
+    return colorPalette.pairs[0];
+  };
 
   return (
     <div 
@@ -67,7 +80,7 @@ export const EventItem: React.FC<EventItemProps> = ({
         }`}
         onClick={() => onClick(event)}
         style={{
-          borderLeft: `4px solid ${borderColor}`,
+          borderLeft: `4px solid ${getBorderColor(depth, event.parentId)}`,
           borderTop: '1px solid hsl(var(--border))',
           borderRight: '1px solid hsl(var(--border))',
           borderBottom: '1px solid hsl(var(--border))',
