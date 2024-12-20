@@ -24,8 +24,8 @@ interface CustomNodeData {
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node<CustomNodeData>[]>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeData>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
     const nodeLevels = new Map<string, number>();
@@ -128,9 +128,9 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     });
 
     // Create edges
-    const newEdges: Edge[] = events
+    const newEdges = events
       .filter(event => event.parentId)
-      .map(event => ({
+      .map((event): Edge => ({
         id: `${event.parentId}-${event.id}`,
         source: event.parentId!,
         target: event.id,
