@@ -21,7 +21,7 @@ interface VisualizationProps {
 interface CustomNodeData {
   label: React.ReactNode;
   tactic?: string;
-  [key: string]: unknown; // Add index signature to satisfy Record<string, unknown>
+  [key: string]: unknown;
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
