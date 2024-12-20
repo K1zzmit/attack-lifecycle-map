@@ -26,9 +26,10 @@ interface ArtifactValueInputProps {
 export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
   value,
   onChange,
-  recentValues = [], // Provide default empty array
+  recentValues = [],
 }) => {
   const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(value);
 
   // If we have recent values, show the combobox
   if (recentValues.length > 0) {
@@ -49,9 +50,17 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
           <Command>
             <CommandInput 
               placeholder="Search or enter new value..."
-              value={value}
-              onValueChange={onChange}
+              value={inputValue}
+              onValueChange={(newValue) => {
+                setInputValue(newValue);
+                onChange(newValue);
+              }}
             />
+            <CommandEmpty>
+              <div className="py-2 px-4 text-sm">
+                No matches found. Type to add a new value.
+              </div>
+            </CommandEmpty>
             <CommandGroup>
               {recentValues.map((item) => (
                 <CommandItem
@@ -59,6 +68,7 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
                   value={item}
                   onSelect={(currentValue) => {
                     onChange(currentValue);
+                    setInputValue(currentValue);
                     setOpen(false);
                   }}
                 >
