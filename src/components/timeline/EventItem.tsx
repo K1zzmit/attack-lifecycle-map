@@ -22,32 +22,66 @@ export const EventItem: React.FC<EventItemProps> = ({
     position: 'relative',
   };
 
+  // Get border color based on depth
+  const getBorderColor = (depth: number) => {
+    switch(depth) {
+      case 0:
+        return 'border-[#ea384c]'; // Red for parent
+      case 1:
+        return 'border-[#0EA5E9]'; // Blue for first level
+      case 2:
+        return 'border-[#F97316]'; // Yellow/Orange for second level
+      default:
+        return 'border-[#0EA5E9]'; // Blue for deeper levels
+    }
+  };
+
+  // Get connector color based on depth
+  const getConnectorColor = (depth: number) => {
+    switch(depth) {
+      case 0:
+        return '#ea384c'; // Red for parent
+      case 1:
+        return '#0EA5E9'; // Blue for first level
+      case 2:
+        return '#F97316'; // Yellow/Orange for second level
+      default:
+        return '#0EA5E9'; // Blue for deeper levels
+    }
+  };
+
   return (
     <div className="relative" style={indentationStyle}>
-      {/* Vertical line */}
-      <div 
-        className="timeline-connector absolute" 
-        data-depth={depth}
-        style={{
-          left: '-1.25rem',
-          top: '0',
-          height: isLastEvent ? '50%' : '100%',
-        }}
-      />
-      {/* Horizontal line */}
-      <div 
-        className="absolute"
-        style={{
-          left: '-1.25rem',
-          top: '50%',
-          width: '1.25rem',
-          height: '2px',
-          background: 'hsl(var(--primary))',
-          opacity: 0.8,
-        }}
-      />
+      {depth > 0 && (
+        <>
+          {/* Vertical connector */}
+          <div 
+            className="absolute"
+            style={{
+              left: '-1.25rem',
+              top: '-1rem',
+              width: '2px',
+              height: '100%',
+              background: getConnectorColor(depth),
+              opacity: 0.8,
+            }}
+          />
+          {/* Horizontal connector */}
+          <div 
+            className="absolute"
+            style={{
+              left: '-1.25rem',
+              top: '1.5rem',
+              width: '1.25rem',
+              height: '2px',
+              background: getConnectorColor(depth),
+              opacity: 0.8,
+            }}
+          />
+        </>
+      )}
       <div
-        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-lg transition-colors`}
+        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none border-2 ${getBorderColor(depth)}`}
         onClick={() => onClick(event)}
         data-depth={depth}
       >

@@ -46,69 +46,30 @@
 }
 
 .timeline-event {
-  @apply relative p-4 border border-border rounded-lg bg-card hover:bg-accent transition-colors cursor-pointer;
+  @apply relative p-4 rounded-none bg-card hover:bg-card/80 transition-colors cursor-pointer;
 }
 
+/* Remove the default timeline-event::before styles since we're handling the connectors differently now */
 .timeline-event::before {
-  content: '';
-  @apply absolute w-3 h-3 rounded-full -left-6 top-1/2 -translate-y-1/2;
-  background: theme('colors.primary.DEFAULT');
-  box-shadow: 0 0 8px theme('colors.primary.DEFAULT');
-}
-
-/* Parent event specific styles */
-.timeline-event[data-depth="0"]::before {
-  @apply bg-[#9b87f5];
-  box-shadow: 0 0 8px #9b87f5;
-}
-
-/* First level children */
-.timeline-event[data-depth="1"]::before {
-  @apply bg-[#7E69AB];
-  box-shadow: 0 0 8px #7E69AB;
-}
-
-/* Second level children */
-.timeline-event[data-depth="2"]::before {
-  @apply bg-[#6E59A5];
-  box-shadow: 0 0 8px #6E59A5;
-}
-
-/* Third level and deeper children */
-.timeline-event[data-depth="3"]::before,
-.timeline-event[data-depth="4"]::before,
-.timeline-event[data-depth="5"]::before {
-  @apply bg-[#D6BCFA];
-  box-shadow: 0 0 8px #D6BCFA;
+  display: none;
 }
 
 .timeline-connector {
-  @apply absolute w-0.5;
-  background: linear-gradient(180deg, #9b87f5 0%, #1EAEDB 100%);
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+  @apply absolute;
   opacity: 0.8;
 }
 
-/* Connector color variations based on depth */
-.timeline-connector[data-depth="0"] {
-  background: linear-gradient(180deg, #9b87f5 0%, #7E69AB 100%);
-  box-shadow: 0 0 8px rgba(155, 135, 245, 0.5);
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.timeline-connector[data-depth="1"] {
-  background: linear-gradient(180deg, #7E69AB 0%, #6E59A5 100%);
-  box-shadow: 0 0 8px rgba(126, 105, 171, 0.5);
-}
-
-.timeline-connector[data-depth="2"] {
-  background: linear-gradient(180deg, #6E59A5 0%, #D6BCFA 100%);
-  box-shadow: 0 0 8px rgba(110, 89, 165, 0.5);
-}
-
-.visualization-node {
-  @apply relative p-4 border border-border rounded-lg bg-card hover:bg-accent transition-colors cursor-pointer;
-}
-
-.visualization-connector {
-  @apply absolute bg-primary;
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
 }
