@@ -26,13 +26,13 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
   const [search, setSearch] = useState('');
 
   const filteredValues = recentValues.filter(item =>
-    item.toLowerCase().includes(search.toLowerCase())
+    item.toLowerCase().includes((search || value).toLowerCase())
   );
 
   const handleSelect = (selectedValue: string) => {
-    onChange(selectedValue);
     setSearch('');
     setOpen(false);
+    onChange(selectedValue);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
