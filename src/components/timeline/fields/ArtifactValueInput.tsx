@@ -57,15 +57,15 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command shouldFilter={false}>
+        <Command>
           <CommandInput 
             placeholder="Search or enter new value..."
             value={value}
             onValueChange={onChange}
           />
-          <CommandEmpty>No matches found</CommandEmpty>
+          <CommandEmpty>No matches found.</CommandEmpty>
           <CommandGroup>
-            {recentValues.map((item) => (
+            {(recentValues || []).map((item) => (
               <CommandItem
                 key={item}
                 onSelect={() => {
