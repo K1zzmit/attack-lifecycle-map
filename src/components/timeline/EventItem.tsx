@@ -1,12 +1,12 @@
 import React from 'react';
 import type { TimelineEvent } from '@/pages/Index';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 
 interface EventItemProps {
   event: TimelineEvent;
   onClick: (event: TimelineEvent) => void;
   parentEvent?: TimelineEvent;
   depth?: number;
-  isLastEvent?: boolean;
 }
 
 export const EventItem: React.FC<EventItemProps> = ({ 
@@ -14,11 +14,27 @@ export const EventItem: React.FC<EventItemProps> = ({
   onClick, 
   parentEvent,
   depth = 0,
-  isLastEvent = false
 }) => {
+  const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
+    id: event.id,
+  });
+
+  const { setNodeRef: setDropRef } = useDroppable({
+    id: event.id,
+  });
+
+  // Combine drag and drop refs
+  const setRefs = (element: HTMLDivElement) => {
+    setDragRef(element);
+    setDropRef(element);
+  };
+
   const indentationStyle: React.CSSProperties = {
     marginLeft: `${depth * 2}rem`,
     position: 'relative',
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
   };
 
   const getBorderColor = (depth: number) => {
@@ -37,9 +53,15 @@ export const EventItem: React.FC<EventItemProps> = ({
   const borderColor = getBorderColor(depth);
 
   return (
-    <div className="relative" style={indentationStyle}>
+    <div 
+      className="relative" 
+      style={indentationStyle} 
+      ref={setRefs}
+      {...attributes}
+      {...listeners}
+    >
       <div
-        className="timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-none"
+        className="timeline-event mb-4 animate-fade-in p-4 rounded-none"
         onClick={() => onClick(event)}
         style={{
           borderLeft: `4px solid ${borderColor}`,
