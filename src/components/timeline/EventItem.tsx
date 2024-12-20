@@ -16,7 +16,7 @@ export const EventItem: React.FC<EventItemProps> = ({
 }) => {
   // Calculate indentation based on depth
   const indentationStyle: React.CSSProperties = {
-    marginLeft: `${depth * 2}rem`,
+    marginLeft: `${depth * 2.5}rem`,
     borderLeftWidth: depth > 0 ? '2px' : '0',
     borderLeftStyle: depth > 0 ? 'solid' : undefined,
     borderLeftColor: 'hsl(var(--border))',
@@ -32,45 +32,57 @@ export const EventItem: React.FC<EventItemProps> = ({
   };
 
   return (
-    <div
-      className={`timeline-event mb-4 animate-fade-in cursor-pointer ${getBackgroundColorClass()} p-4 rounded-lg transition-colors`}
-      onClick={() => onClick(event)}
-      style={indentationStyle}
-    >
-      <div className="text-sm text-muted-foreground">{event.timestamp}</div>
-      <div className="font-medium">{event.title || "New Event"}</div>
-      
-      {event.artifacts?.length > 0 && (
-        <div className="mt-2 space-y-1">
-          {event.artifacts.map((artifact, index) => (
-            <div key={index} className="text-sm">
-              <span className="font-medium">{artifact.name}:</span>{' '}
-              {artifact.value}
-              {artifact.linkedValue && (
-                <span className="text-muted-foreground">
-                  {' '}→ {artifact.linkedValue}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
+    <div className="relative">
+      {depth > 0 && (
+        <div 
+          className="timeline-connector" 
+          data-depth={depth - 1}
+          style={{
+            height: '100%',
+          }}
+        />
       )}
+      <div
+        className={`timeline-event mb-4 animate-fade-in cursor-pointer ${getBackgroundColorClass()} p-4 rounded-lg transition-colors`}
+        onClick={() => onClick(event)}
+        style={indentationStyle}
+        data-depth={depth}
+      >
+        <div className="text-sm text-muted-foreground">{event.timestamp}</div>
+        <div className="font-medium">{event.title || "New Event"}</div>
+        
+        {event.artifacts?.length > 0 && (
+          <div className="mt-2 space-y-1">
+            {event.artifacts.map((artifact, index) => (
+              <div key={index} className="text-sm">
+                <span className="font-medium">{artifact.name}:</span>{' '}
+                {artifact.value}
+                {artifact.linkedValue && (
+                  <span className="text-muted-foreground">
+                    {' '}→ {artifact.linkedValue}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
-      <div className="text-sm mt-1">{event.description}</div>
-      
-      {event.technique && (
-        <div className="mt-2">
-          <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
-            {event.technique}
-          </span>
-        </div>
-      )}
-      
-      {parentEvent && (
-        <div className="mt-2 text-xs text-muted-foreground">
-          Connected to: {parentEvent.title || 'Unknown Event'}
-        </div>
-      )}
+        <div className="text-sm mt-1">{event.description}</div>
+        
+        {event.technique && (
+          <div className="mt-2">
+            <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
+              {event.technique}
+            </span>
+          </div>
+        )}
+        
+        {parentEvent && (
+          <div className="mt-2 text-xs text-muted-foreground">
+            Connected to: {parentEvent.title || 'Unknown Event'}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
