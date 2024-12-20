@@ -5,6 +5,13 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
 
+export interface Artifact {
+  type: 'hostname' | 'domain' | 'file' | 'ip' | 'hash' | 'custom';
+  name: string;
+  value: string;
+  linkedValue?: string; // For joined artifacts (e.g., IP for hostname, hash for file)
+}
+
 export interface TimelineEvent {
   id: string;
   timestamp: string;
@@ -13,23 +20,7 @@ export interface TimelineEvent {
   tactic?: string;
   technique?: string;
   parentId?: string;
-  host?: string;
-  user?: string;
-  process?: string;
-  commandLine?: string;
-  sha256?: string;
-  sourceUrl?: string;
-  sourceIp?: string;
-  networkDetails?: {
-    proxyIp?: string;
-    port?: number;
-    destinationIp?: string;
-  };
-  artifacts?: {
-    type: 'file' | 'registry' | 'process' | 'network';
-    name: string;
-    details: string;
-  }[];
+  artifacts: Artifact[];
 }
 
 const Index = () => {
@@ -42,8 +33,7 @@ const Index = () => {
       timestamp: new Date().toISOString().slice(0, 16),
       title: "",
       description: "",
-      host: "",
-      user: "",
+      artifacts: [],
     };
     setEvents([...events, newEvent]);
     toast({
