@@ -59,11 +59,17 @@ export const EventItem: React.FC<EventItemProps> = ({
       return colorPalette[parseInt(event.id.slice(-3), 16) % colorPalette.length];
     }
     
-    // For child events, use the parent's ID to determine color
-    // But ensure it's different from the parent's color
+    // For child events:
+    // 1. Get parent's color
     const parentColor = colorPalette[parseInt(parentId.slice(-3), 16) % colorPalette.length];
+    
+    // 2. Get available colors (excluding parent's color)
     const availableColors = colorPalette.filter(color => color !== parentColor);
-    const childColorIndex = parseInt(event.id.slice(-3), 16) % availableColors.length;
+    
+    // 3. Use parent's ID to determine child color
+    // This ensures all children of the same parent get the same color
+    const childColorIndex = parseInt(parentId.slice(-3), 16) % availableColors.length;
+    
     return availableColors[childColorIndex];
   };
 
