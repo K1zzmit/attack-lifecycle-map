@@ -11,8 +11,25 @@ export interface TimelineEvent {
   title: string;
   description: string;
   technique?: string;
-  artifacts?: string[];
   parentId?: string;
+  // New fields
+  host?: string;
+  user?: string;
+  process?: string;
+  commandLine?: string;
+  sha256?: string;
+  sourceUrl?: string;
+  sourceIp?: string;
+  networkDetails?: {
+    proxyIp?: string;
+    port?: number;
+    destinationIp?: string;
+  };
+  artifacts?: {
+    type: 'file' | 'registry' | 'process' | 'network';
+    name: string;
+    details: string;
+  }[];
 }
 
 const Index = () => {
@@ -25,6 +42,8 @@ const Index = () => {
       timestamp: new Date().toISOString().slice(0, 16),
       title: "",
       description: "",
+      host: "",
+      user: "",
     };
     setEvents([...events, newEvent]);
     toast({
@@ -36,7 +55,7 @@ const Index = () => {
   const handleSelectEvent = (event: TimelineEvent) => {
     toast({
       title: "Event Selected",
-      description: `Selected: ${event.title}`,
+      description: `Selected: ${event.title || 'Untitled Event'}`,
     });
   };
 

@@ -61,6 +61,16 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
               >
                 <div className="text-sm text-muted-foreground">{event.timestamp}</div>
                 <div className="font-medium">{event.title || "New Event"}</div>
+                {event.host && (
+                  <div className="text-sm mt-1">
+                    <span className="font-medium">Host:</span> {event.host}
+                  </div>
+                )}
+                {event.user && (
+                  <div className="text-sm">
+                    <span className="font-medium">User:</span> {event.user}
+                  </div>
+                )}
                 <div className="text-sm mt-1">{event.description}</div>
                 {event.technique && (
                   <div className="mt-2">
@@ -81,7 +91,7 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Event</DialogTitle>
           </DialogHeader>
@@ -112,6 +122,83 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
                     setSelectedEvent({
                       ...selectedEvent,
                       title: e.target.value,
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="host">Host</Label>
+                <Input
+                  id="host"
+                  value={selectedEvent?.host || ''}
+                  onChange={(e) => {
+                    if (selectedEvent) {
+                      setSelectedEvent({
+                        ...selectedEvent,
+                        host: e.target.value,
+                      });
+                    }
+                  }}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="user">User</Label>
+                <Input
+                  id="user"
+                  value={selectedEvent?.user || ''}
+                  onChange={(e) => {
+                    if (selectedEvent) {
+                      setSelectedEvent({
+                        ...selectedEvent,
+                        user: e.target.value,
+                      });
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="process">Process</Label>
+              <Input
+                id="process"
+                value={selectedEvent?.process || ''}
+                onChange={(e) => {
+                  if (selectedEvent) {
+                    setSelectedEvent({
+                      ...selectedEvent,
+                      process: e.target.value,
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="commandLine">Command Line</Label>
+              <Input
+                id="commandLine"
+                value={selectedEvent?.commandLine || ''}
+                onChange={(e) => {
+                  if (selectedEvent) {
+                    setSelectedEvent({
+                      ...selectedEvent,
+                      commandLine: e.target.value,
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="sha256">SHA256</Label>
+              <Input
+                id="sha256"
+                value={selectedEvent?.sha256 || ''}
+                onChange={(e) => {
+                  if (selectedEvent) {
+                    setSelectedEvent({
+                      ...selectedEvent,
+                      sha256: e.target.value,
                     });
                   }
                 }}
