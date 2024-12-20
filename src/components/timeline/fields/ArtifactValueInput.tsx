@@ -24,76 +24,68 @@ interface ArtifactValueInputProps {
 }
 
 export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
+  type,
   value,
   onChange,
   recentValues = [],
 }) => {
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(value);
 
-  // If we have recent values, show the combobox
-  if (recentValues.length > 0) {
+  // If we don't have recent values, show a regular input
+  if (recentValues.length === 0) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-          >
-            {value || "Select or enter value..."}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
-          <Command>
-            <CommandInput 
-              placeholder="Search or enter new value..."
-              value={inputValue}
-              onValueChange={(newValue) => {
-                setInputValue(newValue);
-                onChange(newValue);
-              }}
-            />
-            <CommandEmpty>
-              <div className="py-2 px-4 text-sm">
-                No matches found. Type to add a new value.
-              </div>
-            </CommandEmpty>
-            <CommandGroup>
-              {recentValues.map((item) => (
-                <CommandItem
-                  key={item}
-                  value={item}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue);
-                    setInputValue(currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === item ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {item}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
+      <Input
+        placeholder="Value"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     );
   }
 
-  // If no recent values, show a regular input
+  // If we have recent values, show the combobox
   return (
-    <Input
-      placeholder="Value"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between"
+        >
+          {value || "Select or enter value..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-full p-0">
+        <Command>
+          <CommandInput 
+            placeholder="Search or enter new value..."
+            value={value}
+            onValueChange={onChange}
+          />
+          <CommandEmpty>No matches found</CommandEmpty>
+          <CommandGroup>
+            {recentValues.map((item) => (
+              <CommandItem
+                key={item}
+                value={item}
+                onSelect={(currentValue) => {
+                  onChange(currentValue);
+                  setOpen(false);
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === item ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                {item}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
