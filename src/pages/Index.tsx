@@ -10,9 +10,9 @@ export interface TimelineEvent {
   timestamp: string;
   title: string;
   description: string;
+  tactic?: string;
   technique?: string;
   parentId?: string;
-  // New fields
   host?: string;
   user?: string;
   process?: string;

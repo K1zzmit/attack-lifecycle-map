@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { TimelineEvent } from '@/pages/Index';
+import { EntityField } from './fields/EntityField';
+import { MitreTacticField } from './fields/MitreTacticField';
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -57,85 +59,28 @@ export const EventDialog: React.FC<EventDialogProps> = ({
           />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="host">Host</Label>
-            <Select
-              value={event.host || ''}
-              onValueChange={(value) => onEventChange({ ...event, host: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select host" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new_host">New Host...</SelectItem>
-                {recentValues.hosts.map((host) => (
-                  <SelectItem key={host} value={host}>
-                    {host}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {(event.host === 'new_host' || (!recentValues.hosts.includes(event.host || '') && event.host)) && (
-              <Input
-                value={event.host === 'new_host' ? '' : (event.host || '')}
-                onChange={(e) => onEventChange({ ...event, host: e.target.value })}
-                placeholder="Enter new host"
-              />
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="user">User</Label>
-            <Select
-              value={event.user || ''}
-              onValueChange={(value) => onEventChange({ ...event, user: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select user" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new_user">New User...</SelectItem>
-                {recentValues.users.map((user) => (
-                  <SelectItem key={user} value={user}>
-                    {user}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {(event.user === 'new_user' || (!recentValues.users.includes(event.user || '') && event.user)) && (
-              <Input
-                value={event.user === 'new_user' ? '' : (event.user || '')}
-                onChange={(e) => onEventChange({ ...event, user: e.target.value })}
-                placeholder="Enter new user"
-              />
-            )}
-          </div>
+          <EntityField
+            label="Host"
+            field="host"
+            event={event}
+            onEventChange={onEventChange}
+            recentValues={recentValues.hosts}
+          />
+          <EntityField
+            label="User"
+            field="user"
+            event={event}
+            onEventChange={onEventChange}
+            recentValues={recentValues.users}
+          />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="process">Process</Label>
-          <Select
-            value={event.process || ''}
-            onValueChange={(value) => onEventChange({ ...event, process: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select process" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="new_process">New Process...</SelectItem>
-              {recentValues.processes.map((process) => (
-                <SelectItem key={process} value={process}>
-                  {process}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {(event.process === 'new_process' || (!recentValues.processes.includes(event.process || '') && event.process)) && (
-            <Input
-              value={event.process === 'new_process' ? '' : (event.process || '')}
-              onChange={(e) => onEventChange({ ...event, process: e.target.value })}
-              placeholder="Enter new process"
-            />
-          )}
-        </div>
+        <EntityField
+          label="Process"
+          field="process"
+          event={event}
+          onEventChange={onEventChange}
+          recentValues={recentValues.processes}
+        />
         <div className="grid gap-2">
           <Label htmlFor="commandLine">Command Line</Label>
           <Input
@@ -160,14 +105,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
             onChange={(e) => onEventChange({ ...event, description: e.target.value })}
           />
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="technique">MITRE Technique</Label>
-          <Input
-            id="technique"
-            value={event.technique || ''}
-            onChange={(e) => onEventChange({ ...event, technique: e.target.value })}
-          />
-        </div>
+        <MitreTacticField event={event} onEventChange={onEventChange} />
         <div className="grid gap-2">
           <Label htmlFor="parentId">Connected to Event</Label>
           <Select

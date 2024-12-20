@@ -162,10 +162,22 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
+        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border"
       >
         <Background />
-        <Controls />
-        <MiniMap />
+        <Controls className="!bg-background !border-border" />
+        <MiniMap 
+          className="!bg-background !border-border" 
+          nodeColor={(node) => {
+            const colorMap: Record<string, string> = {
+              'Initial Access': '#ff0000',
+              'Execution': '#00ff00',
+              'Persistence': '#0000ff',
+              // Add more colors for other tactics
+            };
+            return node.data?.tactic ? colorMap[node.data.tactic] || '#666666' : '#666666';
+          }}
+        />
       </ReactFlow>
     </Card>
   );
