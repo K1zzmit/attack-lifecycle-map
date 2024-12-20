@@ -21,11 +21,6 @@ interface EventDialogProps {
   events: TimelineEvent[];
   onEventChange: (event: TimelineEvent) => void;
   onSave: () => void;
-  recentValues?: {
-    hosts: string[];
-    users: string[];
-    processes: string[];
-  };
 }
 
 export const EventDialog: React.FC<EventDialogProps> = ({
@@ -41,7 +36,6 @@ export const EventDialog: React.FC<EventDialogProps> = ({
 
   if (!event) return null;
 
-  // Collect recent artifacts by type
   const recentArtifacts = events.reduce((acc, evt) => {
     evt.artifacts?.forEach(artifact => {
       if (!acc[artifact.type]) {
@@ -73,7 +67,6 @@ export const EventDialog: React.FC<EventDialogProps> = ({
       artifacts: [...(event.artifacts || []), newArtifact],
     });
 
-    // Reset form
     setNewArtifactType('custom');
     setNewArtifactName('');
     setNewArtifactValue('');

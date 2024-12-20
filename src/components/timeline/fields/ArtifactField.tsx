@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import type { Artifact } from '@/pages/Index';
-import { Label } from '@/components/ui/label';
 import { Combobox } from './Combobox';
 
 interface ArtifactFieldProps {
@@ -35,7 +34,7 @@ export const ArtifactField: React.FC<ArtifactFieldProps> = ({
   recentArtifacts,
 }) => {
   const handleValueSelect = (selectedValue: string) => {
-    console.log("Value selected:", selectedValue);
+    console.log("ArtifactField handleValueSelect:", selectedValue);
     const artifact = recentArtifacts[artifactType]?.find(a => a.value === selectedValue);
     onValueChange(selectedValue);
     if (artifact?.linkedValue) {
