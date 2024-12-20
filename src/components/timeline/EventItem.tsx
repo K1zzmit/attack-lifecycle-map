@@ -19,7 +19,7 @@ export const EventItem: React.FC<EventItemProps> = ({
     id: event.id,
   });
 
-  const { setNodeRef: setDropRef } = useDroppable({
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
     id: event.id,
   });
 
@@ -35,6 +35,7 @@ export const EventItem: React.FC<EventItemProps> = ({
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     opacity: isDragging ? 0.5 : 1,
     cursor: 'grab',
+    zIndex: isDragging ? 50 : 1,
   };
 
   const getBorderColor = (depth: number) => {
@@ -61,7 +62,9 @@ export const EventItem: React.FC<EventItemProps> = ({
       {...listeners}
     >
       <div
-        className="timeline-event mb-4 animate-fade-in p-4 rounded-none"
+        className={`timeline-event mb-4 animate-fade-in p-4 rounded-none transition-all duration-200 ${
+          isOver ? 'scale-95 shadow-lg ring-2 ring-primary' : ''
+        }`}
         onClick={() => onClick(event)}
         style={{
           borderLeft: `4px solid ${borderColor}`,
@@ -70,7 +73,8 @@ export const EventItem: React.FC<EventItemProps> = ({
           borderBottom: '1px solid hsl(var(--border))',
           position: 'relative',
           zIndex: 2,
-          background: 'hsl(var(--card))',
+          background: isOver ? 'hsl(var(--primary)/0.1)' : 'hsl(var(--card))',
+          transform: isOver ? 'translateY(-4px)' : 'none',
         }}
       >
         <div className="text-sm text-muted-foreground">{event.timestamp}</div>
