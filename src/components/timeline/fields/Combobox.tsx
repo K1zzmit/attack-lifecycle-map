@@ -1,19 +1,14 @@
 import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ComboboxProps {
   items: string[];
@@ -31,6 +26,19 @@ export function Combobox({
   placeholder = "Select value..." 
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+
+  const filteredItems = React.useMemo(() => {
+    return items.filter(item => 
+      item.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [items, search]);
+
+  const handleSelect = (item: string) => {
+    onSelect(item);
+    setOpen(false);
+    setSearch("");
+  };
 
   return (
     <div className="w-full">
@@ -46,24 +54,29 @@ export function Combobox({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput 
-              placeholder="Search or enter new value..." 
-              value={value} 
-              onValueChange={onInputChange}
-            />
-            <CommandEmpty>No matching value found.</CommandEmpty>
-            {items.length > 0 && (
-              <CommandGroup>
-                {items.map((item) => (
-                  <CommandItem
+        <PopoverContent className="w-full p-2" align="start">
+          <Input
+            placeholder="Search or enter new value..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              onInputChange(e.target.value);
+            }}
+            className="mb-2"
+          />
+          <ScrollArea className="h-[200px]">
+            {filteredItems.length === 0 ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                No matching value found.
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {filteredItems.map((item) => (
+                  <Button
                     key={item}
-                    value={item}
-                    onSelect={() => {
-                      onSelect(item);
-                      setOpen(false);
-                    }}
+                    variant="ghost"
+                    className="w-full justify-start font-normal"
+                    onClick={() => handleSelect(item)}
                   >
                     <Check
                       className={cn(
@@ -72,11 +85,11 @@ export function Combobox({
                       )}
                     />
                     {item}
-                  </CommandItem>
+                  </Button>
                 ))}
-              </CommandGroup>
+              </div>
             )}
-          </Command>
+          </ScrollArea>
         </PopoverContent>
       </Popover>
     </div>
