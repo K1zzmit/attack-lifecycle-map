@@ -44,14 +44,14 @@ export const EntityField: React.FC<EntityFieldProps> = ({
         )}
       </div>
       <Select
-        value={value || ''}
+        value={value || 'select_new'}
         onValueChange={(newValue) => onEventChange({ ...event, [field]: newValue })}
       >
         <SelectTrigger>
           <SelectValue placeholder={`Select ${field}`} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={`new_${field}`}>New {label}...</SelectItem>
+          <SelectItem value="select_new">New {label}...</SelectItem>
           {recentValues.map((val) => (
             <SelectItem key={val} value={val}>
               {val}

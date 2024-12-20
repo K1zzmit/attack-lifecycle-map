@@ -109,7 +109,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
         <div className="grid gap-2">
           <Label htmlFor="parentId">Connected to Event</Label>
           <Select
-            value={event.parentId || ''}
+            value={event.parentId || 'none'}
             onValueChange={(value) => {
               onEventChange({
                 ...event,
