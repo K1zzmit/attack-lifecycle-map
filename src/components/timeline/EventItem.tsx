@@ -17,35 +17,40 @@ export const EventItem: React.FC<EventItemProps> = ({
   // Calculate indentation based on depth
   const indentationStyle: React.CSSProperties = {
     marginLeft: `${depth * 2.5}rem`,
-    borderLeftWidth: depth > 0 ? '2px' : '0',
-    borderLeftStyle: depth > 0 ? 'solid' : undefined,
-    borderLeftColor: 'hsl(var(--border))',
-    paddingLeft: depth > 0 ? '1rem' : '0',
-  };
-
-  // Determine background color based on depth
-  const getBackgroundColorClass = () => {
-    if (depth === 0) return 'hover:bg-accent/50';
-    if (depth === 1) return 'hover:bg-primary/10';
-    if (depth === 2) return 'hover:bg-secondary/10';
-    return 'hover:bg-muted/50';
+    position: 'relative',
   };
 
   return (
-    <div className="relative">
+    <div className="relative" style={indentationStyle}>
       {depth > 0 && (
-        <div 
-          className="timeline-connector" 
-          data-depth={depth - 1}
-          style={{
-            height: '100%',
-          }}
-        />
+        <>
+          {/* Vertical line */}
+          <div 
+            className="timeline-connector absolute" 
+            data-depth={depth - 1}
+            style={{
+              left: '-1.25rem',
+              top: '0',
+              height: '100%',
+            }}
+          />
+          {/* Horizontal line */}
+          <div 
+            className="absolute"
+            style={{
+              left: '-1.25rem',
+              top: '50%',
+              width: '1.25rem',
+              height: '2px',
+              background: 'hsl(var(--primary))',
+              opacity: 0.8,
+            }}
+          />
+        </>
       )}
       <div
-        className={`timeline-event mb-4 animate-fade-in cursor-pointer ${getBackgroundColorClass()} p-4 rounded-lg transition-colors`}
+        className={`timeline-event mb-4 animate-fade-in cursor-pointer p-4 rounded-lg transition-colors`}
         onClick={() => onClick(event)}
-        style={indentationStyle}
         data-depth={depth}
       >
         <div className="text-sm text-muted-foreground">{event.timestamp}</div>
