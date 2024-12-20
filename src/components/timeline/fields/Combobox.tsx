@@ -37,6 +37,7 @@ export function Combobox({
 
   const handleSelect = (selectedValue: string) => {
     onSelect(selectedValue);
+    onInputChange(selectedValue);
     setSearch("");
     setOpen(false);
   };
@@ -88,11 +89,7 @@ export function Combobox({
                   key={item}
                   variant="ghost"
                   className="w-full justify-start font-normal"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleSelect(item);
-                  }}
+                  onClick={() => handleSelect(item)}
                 >
                   <Check
                     className={cn(
