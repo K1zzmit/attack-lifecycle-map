@@ -59,7 +59,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     });
 
     // Convert events to nodes with calculated positions
-    const newNodes: Node<CustomNodeData>[] = events.map((event) => {
+    const newNodes = events.map((event): Node<CustomNodeData> => {
       const level = nodeLevels.get(event.id) || 0;
       const nodesAtLevel = nodesByLevel.get(level) || [];
       const indexAtLevel = nodesAtLevel.indexOf(event.id);
