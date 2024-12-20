@@ -29,6 +29,7 @@ export function Combobox({
   const [search, setSearch] = React.useState("");
 
   const filteredItems = React.useMemo(() => {
+    if (!search) return items;
     return items.filter(item => 
       item.toLowerCase().includes(search.toLowerCase())
     );
@@ -36,6 +37,7 @@ export function Combobox({
 
   const handleSelect = (item: string) => {
     onSelect(item);
+    onInputChange(item);
     setOpen(false);
     setSearch("");
   };
