@@ -23,8 +23,9 @@ interface ComboboxProps {
   placeholder?: string;
 }
 
-export function Combobox({ items, value, onSelect, onInputChange, placeholder }: ComboboxProps) {
+export function Combobox({ items = [], value, onSelect, onInputChange, placeholder }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const safeItems = items || [];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -48,7 +49,7 @@ export function Combobox({ items, value, onSelect, onInputChange, placeholder }:
           />
           <CommandEmpty>No matching value found.</CommandEmpty>
           <CommandGroup>
-            {items.map((item) => (
+            {safeItems.map((item) => (
               <CommandItem
                 key={item}
                 value={item}
