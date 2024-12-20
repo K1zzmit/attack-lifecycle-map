@@ -37,6 +37,20 @@ export const ArtifactForm: React.FC<ArtifactFormProps> = ({
                          artifactType === 'domain' || 
                          artifactType === 'file';
 
+  // Handle value selection and automatically set linked value if it exists
+  const handleValueChange = (newValue: string) => {
+    onValueChange(newValue);
+    
+    // Find matching recent artifact and set its linked value if it exists
+    const matchingArtifact = recentArtifacts[artifactType]?.find(
+      artifact => artifact.value === newValue
+    );
+    
+    if (matchingArtifact?.linkedValue) {
+      onLinkedValueChange(matchingArtifact.linkedValue);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-2">
@@ -63,7 +77,7 @@ export const ArtifactForm: React.FC<ArtifactFormProps> = ({
       <ArtifactValueInput
         type={artifactType}
         value={artifactValue}
-        onChange={onValueChange}
+        onChange={handleValueChange}
         recentValues={recentArtifacts[artifactType]?.map(a => a.value) || []}
       />
 
