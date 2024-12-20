@@ -3,18 +3,10 @@ import { Card } from './ui/card';
 import { ScrollArea } from './ui/scroll-area';
 import { Plus } from 'lucide-react';
 import { Button } from './ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Dialog } from "@/components/ui/dialog";
 import type { TimelineEvent } from '@/pages/Index';
+import { EventDialog } from './timeline/EventDialog';
+import { EventItem } from './timeline/EventItem';
 
 interface TimelineProps {
   events: TimelineEvent[];
@@ -40,6 +32,13 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     }
   };
 
+  // Get recent values for autocomplete
+  const recentValues = {
+    hosts: [...new Set(events.map(e => e.host).filter(Boolean) as string[])],
+    users: [...new Set(events.map(e => e.user).filter(Boolean) as string[])],
+    processes: [...new Set(events.map(e => e.process).filter(Boolean) as string[])],
+  };
+
   return (
     <>
       <Card className="h-full bg-background/50 backdrop-blur">
@@ -54,220 +53,25 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
           <div className="relative">
             <div className="timeline-connector" />
             {events.map((event) => (
-              <div
+              <EventItem
                 key={event.id}
-                className="timeline-event mb-8 ml-8 animate-fade-in cursor-pointer hover:bg-accent/50 p-4 rounded-lg transition-colors"
-                onClick={() => handleEventClick(event)}
-              >
-                <div className="text-sm text-muted-foreground">{event.timestamp}</div>
-                <div className="font-medium">{event.title || "New Event"}</div>
-                {event.host && (
-                  <div className="text-sm mt-1">
-                    <span className="font-medium">Host:</span> {event.host}
-                  </div>
-                )}
-                {event.user && (
-                  <div className="text-sm">
-                    <span className="font-medium">User:</span> {event.user}
-                  </div>
-                )}
-                <div className="text-sm mt-1">{event.description}</div>
-                {event.technique && (
-                  <div className="mt-2">
-                    <span className="inline-block px-2 py-1 text-xs bg-primary/10 text-primary rounded">
-                      {event.technique}
-                    </span>
-                  </div>
-                )}
-                {event.parentId && (
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    Connected to: {events.find(e => e.id === event.parentId)?.title || 'Unknown Event'}
-                  </div>
-                )}
-              </div>
+                event={event}
+                onClick={handleEventClick}
+                parentEvent={events.find(e => e.id === event.parentId)}
+              />
             ))}
           </div>
         </ScrollArea>
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Event</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="timestamp">Timestamp</Label>
-              <Input
-                id="timestamp"
-                type="datetime-local"
-                value={selectedEvent?.timestamp || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      timestamp: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={selectedEvent?.title || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      title: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="host">Host</Label>
-                <Input
-                  id="host"
-                  value={selectedEvent?.host || ''}
-                  onChange={(e) => {
-                    if (selectedEvent) {
-                      setSelectedEvent({
-                        ...selectedEvent,
-                        host: e.target.value,
-                      });
-                    }
-                  }}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="user">User</Label>
-                <Input
-                  id="user"
-                  value={selectedEvent?.user || ''}
-                  onChange={(e) => {
-                    if (selectedEvent) {
-                      setSelectedEvent({
-                        ...selectedEvent,
-                        user: e.target.value,
-                      });
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="process">Process</Label>
-              <Input
-                id="process"
-                value={selectedEvent?.process || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      process: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="commandLine">Command Line</Label>
-              <Input
-                id="commandLine"
-                value={selectedEvent?.commandLine || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      commandLine: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="sha256">SHA256</Label>
-              <Input
-                id="sha256"
-                value={selectedEvent?.sha256 || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      sha256: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={selectedEvent?.description || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      description: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="technique">MITRE Technique</Label>
-              <Input
-                id="technique"
-                value={selectedEvent?.technique || ''}
-                onChange={(e) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      technique: e.target.value,
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="parentId">Connected to Event</Label>
-              <Select
-                value={selectedEvent?.parentId || ''}
-                onValueChange={(value) => {
-                  if (selectedEvent) {
-                    setSelectedEvent({
-                      ...selectedEvent,
-                      parentId: value === 'none' ? undefined : value,
-                    });
-                  }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select parent event" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {events
-                    .filter(event => event.id !== selectedEvent?.id)
-                    .map(event => (
-                      <SelectItem key={event.id} value={event.id}>
-                        {event.title || 'Untitled Event'}
-                      </SelectItem>
-                    ))
-                  }
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleSave}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
+        <EventDialog
+          event={selectedEvent}
+          events={events}
+          onEventChange={setSelectedEvent}
+          onSave={handleSave}
+          recentValues={recentValues}
+        />
       </Dialog>
     </>
   );
