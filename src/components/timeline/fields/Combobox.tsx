@@ -62,7 +62,6 @@ export function Combobox({
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              onInputChange(e.target.value);
             }}
             className="mb-2"
           />
