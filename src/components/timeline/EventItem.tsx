@@ -43,27 +43,28 @@ export const EventItem: React.FC<EventItemProps> = ({
   };
 
   const getBorderColor = (parentId?: string) => {
-    // Color palette for parent events
-    const colorPalette = {
-      pairs: [
-        '#8B5CF6',         // Vivid Purple
-        '#D946EF',         // Magenta Pink
-        '#F97316',         // Bright Orange
-        '#0EA5E9',         // Ocean Blue
-        '#10B981',         // Emerald Green
-        '#EAB308',         // Yellow
-        '#EC4899',         // Pink
-      ]
-    };
+    // Color palette for events
+    const colorPalette = [
+      '#8B5CF6',         // Vivid Purple
+      '#F97316',         // Bright Orange
+      '#0EA5E9',         // Ocean Blue
+      '#10B981',         // Emerald Green
+      '#EAB308',         // Yellow
+      '#EC4899',         // Pink
+      '#D946EF',         // Magenta Pink
+    ];
 
     // If it's a root event (no parent), use a unique color based on its ID
     if (!parentId) {
-      return colorPalette.pairs[parseInt(event.id.slice(-3), 16) % colorPalette.pairs.length];
+      return colorPalette[parseInt(event.id.slice(-3), 16) % colorPalette.length];
     }
     
     // For child events, use the parent's ID to determine color
-    // This ensures all children of the same parent share the same color
-    return colorPalette.pairs[parseInt(parentId.slice(-3), 16) % colorPalette.pairs.length];
+    // But ensure it's different from the parent's color
+    const parentColor = colorPalette[parseInt(parentId.slice(-3), 16) % colorPalette.length];
+    const availableColors = colorPalette.filter(color => color !== parentColor);
+    const childColorIndex = parseInt(event.id.slice(-3), 16) % availableColors.length;
+    return availableColors[childColorIndex];
   };
 
   const handleDelete = (e: React.MouseEvent) => {
