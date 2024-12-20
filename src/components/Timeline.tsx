@@ -32,13 +32,6 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
     }
   };
 
-  // Get recent values for autocomplete
-  const recentValues = {
-    hosts: [...new Set(events.map(e => e.host).filter(Boolean) as string[])],
-    users: [...new Set(events.map(e => e.user).filter(Boolean) as string[])],
-    processes: [...new Set(events.map(e => e.process).filter(Boolean) as string[])],
-  };
-
   return (
     <>
       <Card className="h-full bg-background/50 backdrop-blur">
@@ -70,7 +63,6 @@ const Timeline: React.FC<TimelineProps> = ({ events, onAddEvent, onSelectEvent, 
           events={events}
           onEventChange={setSelectedEvent}
           onSave={handleSave}
-          recentValues={recentValues}
         />
       </Dialog>
     </>
