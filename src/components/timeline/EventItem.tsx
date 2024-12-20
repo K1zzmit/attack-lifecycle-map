@@ -24,16 +24,17 @@ export const EventItem: React.FC<EventItemProps> = ({
 
   return (
     <div className="relative" style={indentationStyle}>
-      {depth > 0 && (
+      {/* Only show connectors for events with depth > 0 or if it's a parent event */}
+      {(depth > 0 || event.parentId) && (
         <>
           {/* Vertical line */}
           <div 
             className="timeline-connector absolute" 
-            data-depth={depth - 1}
+            data-depth={depth}
             style={{
               left: '-1.25rem',
-              top: '0',
-              height: isLastEvent ? '50%' : '100%',
+              top: depth === 0 ? '50%' : '0',
+              height: isLastEvent ? '50%' : (depth === 0 ? '50%' : '100%'),
             }}
           />
           {/* Horizontal line */}
