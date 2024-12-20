@@ -9,7 +9,7 @@ import {
   useNodesState,
   useEdgesState,
   Node,
-  NodeProps,
+  Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -24,8 +24,8 @@ interface CustomNodeData {
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<CustomNodeData>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<CustomNodeData>[]>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge[]>([]);
 
   useEffect(() => {
     const nodeLevels = new Map<string, number>();
@@ -127,33 +127,15 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
       };
     });
 
-    setNodes(newNodes);
-    // Create a color map for parent events
-    const colorMap = new Map();
-    const colors = [
-      'rgb(59, 130, 246)', // blue
-      'rgb(16, 185, 129)', // green
-      'rgb(239, 68, 68)',  // red
-      'rgb(217, 70, 239)', // purple
-      'rgb(245, 158, 11)', // orange
-    ];
-    let colorIndex = 0;
-
-    events.forEach(event => {
-      if (event.parentId && !colorMap.has(event.parentId)) {
-        colorMap.set(event.parentId, colors[colorIndex % colors.length]);
-        colorIndex++;
-      }
-    });
-
-    const newEdges = events
+    // Create edges
+    const newEdges: Edge[] = events
       .filter(event => event.parentId)
       .map(event => ({
         id: `${event.parentId}-${event.id}`,
         source: event.parentId!,
         target: event.id,
         animated: true,
-        style: { stroke: colorMap.get(event.parentId) || 'rgb(148, 163, 184)' },
+        style: { stroke: 'rgb(148, 163, 184)' },
       }));
 
     setNodes(newNodes);
@@ -175,14 +157,14 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         <MiniMap 
           className="!bg-background !border-border" 
           nodeColor={(node) => {
+            const data = node.data as CustomNodeData;
             const colorMap: Record<string, string> = {
               'Initial Access': '#ef4444',
               'Execution': '#22c55e',
               'Persistence': '#3b82f6',
               'Lateral Movement': '#a855f7',
-              // Add more colors for other tactics
             };
-            return node.data?.tactic ? colorMap[node.data.tactic] || '#666666' : '#666666';
+            return data?.tactic ? colorMap[data.tactic] || '#666666' : '#666666';
           }}
         />
       </ReactFlow>

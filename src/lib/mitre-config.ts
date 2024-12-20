@@ -64,7 +64,7 @@ export const ALL_AVAILABLE_FIELDS: FieldName[] = [
 ];
 
 export const getFieldLabel = (field: FieldName): string => {
-  const labels: Record<FieldName, string> = {
+  const labels: Record<string, string> = {
     'timestamp': 'Timestamp',
     'title': 'Title',
     'host': 'Host',
