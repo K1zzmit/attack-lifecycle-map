@@ -39,17 +39,17 @@ export const EventItem: React.FC<EventItemProps> = ({
   };
 
   const getBorderColor = (depth: number, parentId?: string) => {
-    // Color palette for different depths and parent relationships
+    // Vibrant rainbow color palette for parent-child relationships
     const colorPalette = {
-      root: '#ea384c',      // Red for root events
+      root: '#ea384c',      // Vibrant Red for root events
       pairs: [
-        '#0EA5E9',         // Ocean Blue
-        '#F97316',         // Bright Orange
         '#8B5CF6',         // Vivid Purple
         '#D946EF',         // Magenta Pink
-        '#9b87f5',         // Primary Purple
-        '#7E69AB',         // Secondary Purple
-        '#6E59A5',         // Tertiary Purple
+        '#F97316',         // Bright Orange
+        '#0EA5E9',         // Ocean Blue
+        '#10B981',         // Emerald Green
+        '#EAB308',         // Yellow
+        '#EC4899',         // Pink
       ]
     };
 
