@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 
 interface EventItemProps {
   event: TimelineEvent;
+  events: TimelineEvent[];  // Add events to props
   onClick: (event: TimelineEvent) => void;
   onDelete: (eventId: string) => void;
   parentEvent?: TimelineEvent;
@@ -14,6 +15,7 @@ interface EventItemProps {
 
 export const EventItem: React.FC<EventItemProps> = ({ 
   event, 
+  events,  // Destructure events from props
   onClick,
   onDelete,
   parentEvent,

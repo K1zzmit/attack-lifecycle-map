@@ -184,6 +184,7 @@ const Timeline: React.FC<TimelineProps> = ({
                 <EventItem
                   key={event.id}
                   event={event}
+                  events={events}  // Pass events prop here
                   onClick={handleEventClick}
                   onDelete={handleDelete}
                   parentEvent={events.find(e => e.id === event.parentId)}
