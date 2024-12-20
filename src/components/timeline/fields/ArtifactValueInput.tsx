@@ -26,7 +26,7 @@ interface ArtifactValueInputProps {
 export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
   value,
   onChange,
-  recentValues,
+  recentValues = [], // Provide default empty array
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -52,11 +52,6 @@ export const ArtifactValueInput: React.FC<ArtifactValueInputProps> = ({
               value={value}
               onValueChange={onChange}
             />
-            <CommandEmpty>
-              <span className="px-2 py-1.5 text-sm">
-                No value found. Press enter to add.
-              </span>
-            </CommandEmpty>
             <CommandGroup>
               {recentValues.map((item) => (
                 <CommandItem
