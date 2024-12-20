@@ -27,11 +27,6 @@ export function Combobox({ items = [], value, onSelect, onInputChange, placehold
   const [open, setOpen] = React.useState(false);
   const safeItems = Array.isArray(items) ? items : [];
 
-  const handleSelect = React.useCallback((currentValue: string) => {
-    onSelect(currentValue);
-    setOpen(false);
-  }, [onSelect]);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -58,7 +53,10 @@ export function Combobox({ items = [], value, onSelect, onInputChange, placehold
               <CommandItem
                 key={item}
                 value={item}
-                onSelect={() => handleSelect(item)}
+                onSelect={() => {
+                  onSelect(item);
+                  setOpen(false);
+                }}
               >
                 <Check
                   className={cn(
