@@ -42,10 +42,9 @@ export const EventItem: React.FC<EventItemProps> = ({
     zIndex: isDragging ? 50 : 1,
   };
 
-  const getBorderColor = (depth: number, parentId?: string) => {
-    // Vibrant rainbow color palette for parent-child relationships
+  const getBorderColor = (parentId?: string) => {
+    // Color palette for parent events
     const colorPalette = {
-      root: '#ea384c',      // Vibrant Red for root events
       pairs: [
         '#8B5CF6',         // Vivid Purple
         '#D946EF',         // Magenta Pink
@@ -57,21 +56,18 @@ export const EventItem: React.FC<EventItemProps> = ({
       ]
     };
 
-    if (depth === 0) return colorPalette.root;
-    
-    // Use the parent ID to determine the color index
-    // This ensures children of the same parent share the same color
-    if (parentId) {
-      const colorIndex = parseInt(parentId.slice(-3), 16) % colorPalette.pairs.length;
-      return colorPalette.pairs[colorIndex];
+    // If it's a root event (no parent), use a unique color based on its ID
+    if (!parentId) {
+      return colorPalette.pairs[parseInt(event.id.slice(-3), 16) % colorPalette.pairs.length];
     }
-
-    // Fallback color if no parent ID
-    return colorPalette.pairs[0];
+    
+    // For child events, use the parent's ID to determine color
+    // This ensures all children of the same parent share the same color
+    return colorPalette.pairs[parseInt(parentId.slice(-3), 16) % colorPalette.pairs.length];
   };
 
   const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event click handler from firing
+    e.stopPropagation();
     onDelete(event.id);
   };
 
@@ -89,7 +85,7 @@ export const EventItem: React.FC<EventItemProps> = ({
         }`}
         onClick={() => onClick(event)}
         style={{
-          borderLeft: `4px solid ${getBorderColor(depth, event.parentId)}`,
+          borderLeft: `4px solid ${getBorderColor(event.parentId)}`,
           borderTop: '1px solid hsl(var(--border))',
           borderRight: '1px solid hsl(var(--border))',
           borderBottom: '1px solid hsl(var(--border))',
