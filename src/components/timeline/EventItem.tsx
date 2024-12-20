@@ -42,32 +42,50 @@ export const EventItem: React.FC<EventItemProps> = ({
     zIndex: isDragging ? 50 : 1,
   };
 
-  const getBorderColor = (parentId?: string) => {
+  const getBorderColor = (event: TimelineEvent, events: TimelineEvent[]): string => {
     // Color palette for events
     const colorPalette = [
-      '#8B5CF6',         // Vivid Purple
-      '#F97316',         // Bright Orange
-      '#0EA5E9',         // Ocean Blue
-      '#10B981',         // Emerald Green
-      '#EAB308',         // Yellow
-      '#EC4899',         // Pink
-      '#D946EF',         // Magenta Pink
+      '#8B5CF6',  // Purple
+      '#F97316',  // Orange
+      '#0EA5E9',  // Blue
+      '#10B981',  // Green
+      '#EAB308',  // Yellow
+      '#EC4899',  // Pink
+      '#D946EF',  // Magenta
     ];
 
+    // Get all ancestor colors to avoid using them
+    const getAncestorColors = (currentEvent: TimelineEvent): string[] => {
+      const colors: string[] = [];
+      let current = currentEvent;
+      
+      while (current.parentId) {
+        const parent = events.find(e => e.id === current.parentId);
+        if (!parent) break;
+        
+        const parentColor = colorPalette[parseInt(parent.id.slice(-3), 16) % colorPalette.length];
+        colors.push(parentColor);
+        current = parent;
+      }
+      
+      return colors;
+    };
+
     // If it's a root event (no parent), use a unique color based on its ID
-    if (!parentId) {
+    if (!event.parentId) {
       return colorPalette[parseInt(event.id.slice(-3), 16) % colorPalette.length];
     }
-    
+
     // For child events:
-    // 1. Get parent's color
-    const parentColor = colorPalette[parseInt(parentId.slice(-3), 16) % colorPalette.length];
+    // 1. Get all ancestor colors to avoid
+    const ancestorColors = getAncestorColors(event);
     
-    // 2. Get available colors (excluding parent's color)
-    const availableColors = colorPalette.filter(color => color !== parentColor);
+    // 2. Get available colors (excluding all ancestor colors)
+    const availableColors = colorPalette.filter(color => !ancestorColors.includes(color));
     
     // 3. Use parent's ID to determine child color
     // This ensures all children of the same parent get the same color
+    const parentId = event.parentId;
     const childColorIndex = parseInt(parentId.slice(-3), 16) % availableColors.length;
     
     return availableColors[childColorIndex];
@@ -92,7 +110,7 @@ export const EventItem: React.FC<EventItemProps> = ({
         }`}
         onClick={() => onClick(event)}
         style={{
-          borderLeft: `4px solid ${getBorderColor(event.parentId)}`,
+          borderLeft: `4px solid ${getBorderColor(event, events)}`,
           borderTop: '1px solid hsl(var(--border))',
           borderRight: '1px solid hsl(var(--border))',
           borderBottom: '1px solid hsl(var(--border))',
