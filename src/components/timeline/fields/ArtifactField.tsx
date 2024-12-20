@@ -34,15 +34,13 @@ export const ArtifactField: React.FC<ArtifactFieldProps> = ({
   onAdd,
   recentArtifacts,
 }) => {
-  const [isCustomValue, setIsCustomValue] = useState(true);
-
   const handleValueSelect = (selectedValue: string) => {
+    console.log("Value selected:", selectedValue);
     const artifact = recentArtifacts[artifactType]?.find(a => a.value === selectedValue);
     onValueChange(selectedValue);
     if (artifact?.linkedValue) {
       onLinkedValueChange(artifact.linkedValue);
     }
-    setIsCustomValue(false);
   };
 
   return (
