@@ -13,6 +13,7 @@ interface TimelineProps {
   onSelectEvent: (event: TimelineEvent) => void;
   onUpdateEvent: (event: TimelineEvent) => void;
   onDeleteEvent?: (eventId: string) => void;
+  isEditMode: boolean;
 }
 
 const Timeline: React.FC<TimelineProps> = ({ 
@@ -20,7 +21,8 @@ const Timeline: React.FC<TimelineProps> = ({
   onAddEvent, 
   onSelectEvent, 
   onUpdateEvent,
-  onDeleteEvent 
+  onDeleteEvent,
+  isEditMode
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -28,7 +30,7 @@ const Timeline: React.FC<TimelineProps> = ({
   const [linkSourceEvent, setLinkSourceEvent] = useState<TimelineEvent | null>(null);
 
   const handleEventClick = (event: TimelineEvent) => {
-    if (isLinkingMode) {
+    if (isLinkingMode && isEditMode) {
       if (!linkSourceEvent) {
         setLinkSourceEvent(event);
         return;
@@ -68,7 +70,7 @@ const Timeline: React.FC<TimelineProps> = ({
   return (
     <TimelineProvider>
       <Card className="h-full bg-background/50 backdrop-blur">
-        <TimelineHeader onAddEvent={onAddEvent} />
+        <TimelineHeader onAddEvent={onAddEvent} isEditMode={isEditMode} />
         <TimelineList
           events={events}
           onSelectEvent={handleEventClick}
@@ -76,6 +78,7 @@ const Timeline: React.FC<TimelineProps> = ({
           onDeleteEvent={onDeleteEvent}
           isLinkingMode={isLinkingMode}
           linkSourceEvent={linkSourceEvent}
+          isEditMode={isEditMode}
         />
       </Card>
 
@@ -85,6 +88,7 @@ const Timeline: React.FC<TimelineProps> = ({
           events={events}
           onEventChange={setSelectedEvent}
           onSave={handleSave}
+          isEditMode={isEditMode}
         />
       </Dialog>
     </TimelineProvider>

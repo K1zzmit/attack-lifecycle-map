@@ -4,6 +4,8 @@ import Visualization from "@/components/Visualization";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Eye, Edit2 } from "lucide-react";
 
 export interface NetworkDetails {
   proxyIp?: string;
@@ -43,6 +45,7 @@ export interface Artifact {
 const Index = () => {
   const { toast } = useToast();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   const handleAddEvent = () => {
     const newEvent: TimelineEvent = {
@@ -83,10 +86,31 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Attack Lifecycle Visualization</h1>
-        <p className="text-muted-foreground mt-2">
-          Visualize and analyze the complete attack sequence
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Attack Lifecycle Visualization</h1>
+            <p className="text-muted-foreground mt-2">
+              Visualize and analyze the complete attack sequence
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setIsEditMode(!isEditMode)}
+            className="gap-2"
+          >
+            {isEditMode ? (
+              <>
+                <Eye className="h-4 w-4" />
+                Switch to View Mode
+              </>
+            ) : (
+              <>
+                <Edit2 className="h-4 w-4" />
+                Switch to Edit Mode
+              </>
+            )}
+          </Button>
+        </div>
       </div>
       <Tabs defaultValue="timeline" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -100,6 +124,7 @@ const Index = () => {
             onSelectEvent={handleSelectEvent}
             onUpdateEvent={handleUpdateEvent}
             onDeleteEvent={handleDeleteEvent}
+            isEditMode={isEditMode}
           />
         </TabsContent>
         <TabsContent value="visualization" className="h-[calc(100vh-16rem)]">

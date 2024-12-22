@@ -8,12 +8,14 @@ import type { TimelineEvent, Artifact } from '@/pages/Index';
 import { EventForm } from './event-dialog/EventForm';
 import { EventDetails } from './event-dialog/EventDetails';
 import { DialogHeader } from './event-dialog/DialogHeader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EventDialogProps {
   event: TimelineEvent | null;
   events: TimelineEvent[];
   onEventChange: (event: TimelineEvent) => void;
   onSave: () => void;
+  isEditMode: boolean;
 }
 
 export const EventDialog: React.FC<EventDialogProps> = ({
@@ -21,6 +23,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
   events,
   onEventChange,
   onSave,
+  isEditMode,
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [newArtifactType, setNewArtifactType] = useState<Artifact['type']>('custom');
@@ -74,6 +77,63 @@ export const EventDialog: React.FC<EventDialogProps> = ({
     });
   };
 
+  if (!isEditMode) {
+    return (
+      <DialogContent className="sm:max-w-[900px]">
+        <DialogHeader showDetails={false} onToggleDetails={() => {}} />
+        <Tabs defaultValue="details">
+          <TabsList>
+            <TabsTrigger value="details">Details</TabsTrigger>
+            {event.searchQuery && <TabsTrigger value="search">Search Query</TabsTrigger>}
+            {event.rawLog && <TabsTrigger value="log">Raw Log</TabsTrigger>}
+            {event.attachedFile && <TabsTrigger value="file">Attachment</TabsTrigger>}
+          </TabsList>
+          <TabsContent value="details">
+            <EventForm
+              event={event}
+              events={events}
+              onEventChange={() => {}}
+              recentArtifacts={recentArtifacts}
+              newArtifactType={newArtifactType}
+              newArtifactName={newArtifactName}
+              newArtifactValue={newArtifactValue}
+              newArtifactLinkedValue={newArtifactLinkedValue}
+              setNewArtifactType={setNewArtifactType}
+              setNewArtifactName={setNewArtifactName}
+              setNewArtifactValue={setNewArtifactValue}
+              setNewArtifactLinkedValue={setNewArtifactLinkedValue}
+              handleAddArtifact={handleAddArtifact}
+              handleRemoveArtifact={handleRemoveArtifact}
+              readOnly={true}
+            />
+          </TabsContent>
+          {event.searchQuery && (
+            <TabsContent value="search" className="space-y-4">
+              <h3 className="text-lg font-medium">Search Query</h3>
+              <pre className="bg-muted p-4 rounded-lg overflow-auto">
+                {event.searchQuery}
+              </pre>
+            </TabsContent>
+          )}
+          {event.rawLog && (
+            <TabsContent value="log" className="space-y-4">
+              <h3 className="text-lg font-medium">Raw Log</h3>
+              <pre className="bg-muted p-4 rounded-lg overflow-auto font-mono text-sm">
+                {event.rawLog}
+              </pre>
+            </TabsContent>
+          )}
+          {event.attachedFile && (
+            <TabsContent value="file" className="space-y-4">
+              <h3 className="text-lg font-medium">Attached File</h3>
+              <p>{event.attachedFile}</p>
+            </TabsContent>
+          )}
+        </Tabs>
+      </DialogContent>
+    );
+  }
+
   return (
     <DialogContent className="sm:max-w-[900px]">
       <DialogHeader
@@ -102,6 +162,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
           setNewArtifactLinkedValue={setNewArtifactLinkedValue}
           handleAddArtifact={handleAddArtifact}
           handleRemoveArtifact={handleRemoveArtifact}
+          readOnly={false}
         />
       )}
 

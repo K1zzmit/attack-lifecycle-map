@@ -22,6 +22,7 @@ interface EventFormProps {
   setNewArtifactLinkedValue: (value: string) => void;
   handleAddArtifact: () => void;
   handleRemoveArtifact: (index: number) => void;
+  readOnly?: boolean;
 }
 
 export const EventForm: React.FC<EventFormProps> = ({
@@ -39,8 +40,8 @@ export const EventForm: React.FC<EventFormProps> = ({
   setNewArtifactLinkedValue,
   handleAddArtifact,
   handleRemoveArtifact,
+  readOnly = false,
 }) => {
-  // Format the timestamp to include seconds
   const formatTimestampForInput = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toISOString().slice(0, 19);
@@ -56,6 +57,8 @@ export const EventForm: React.FC<EventFormProps> = ({
           value={formatTimestampForInput(event.timestamp)}
           onChange={(e) => onEventChange({ ...event, timestamp: e.target.value })}
           step="1"
+          readOnly={readOnly}
+          className={readOnly ? "bg-muted" : ""}
         />
       </div>
       <div className="grid gap-2">
@@ -64,6 +67,8 @@ export const EventForm: React.FC<EventFormProps> = ({
           id="title"
           value={event.title || ''}
           onChange={(e) => onEventChange({ ...event, title: e.target.value })}
+          readOnly={readOnly}
+          className={readOnly ? "bg-muted" : ""}
         />
       </div>
       <div className="grid gap-2">
@@ -72,38 +77,43 @@ export const EventForm: React.FC<EventFormProps> = ({
           id="description"
           value={event.description || ''}
           onChange={(e) => onEventChange({ ...event, description: e.target.value })}
+          readOnly={readOnly}
+          className={readOnly ? "bg-muted" : ""}
         />
       </div>
 
-      <MitreTacticField event={event} onEventChange={onEventChange} />
+      {!readOnly && <MitreTacticField event={event} onEventChange={onEventChange} />}
 
-      <div className="grid gap-2">
-        <Label htmlFor="parentId">Parent</Label>
-        <Select
-          value={event.parentId || 'none'}
-          onValueChange={(value) => {
-            onEventChange({
-              ...event,
-              parentId: value === 'none' ? undefined : value,
-            });
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select parent event" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">None</SelectItem>
-            {events
-              .filter(e => e.id !== event.id)
-              .map(e => (
-                <SelectItem key={e.id} value={e.id}>
-                  {e.title || 'Untitled Event'}
-                </SelectItem>
-              ))
-            }
-          </SelectContent>
-        </Select>
-      </div>
+      {!readOnly && (
+        <div className="grid gap-2">
+          <Label htmlFor="parentId">Parent</Label>
+          <Select
+            value={event.parentId || 'none'}
+            onValueChange={(value) => {
+              onEventChange({
+                ...event,
+                parentId: value === 'none' ? undefined : value,
+              });
+            }}
+            disabled={readOnly}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select parent event" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">None</SelectItem>
+              {events
+                .filter(e => e.id !== event.id)
+                .map(e => (
+                  <SelectItem key={e.id} value={e.id}>
+                    {e.title || 'Untitled Event'}
+                  </SelectItem>
+                ))
+              }
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <ArtifactSection
         artifacts={event.artifacts}
@@ -118,6 +128,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         setNewArtifactLinkedValue={setNewArtifactLinkedValue}
         handleAddArtifact={handleAddArtifact}
         handleRemoveArtifact={handleRemoveArtifact}
+        readOnly={readOnly}
       />
     </div>
   );

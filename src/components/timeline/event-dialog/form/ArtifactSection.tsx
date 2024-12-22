@@ -16,6 +16,7 @@ interface ArtifactSectionProps {
   setNewArtifactLinkedValue: (value: string) => void;
   handleAddArtifact: () => void;
   handleRemoveArtifact: (index: number) => void;
+  readOnly?: boolean;
 }
 
 export const ArtifactSection: React.FC<ArtifactSectionProps> = ({
@@ -31,6 +32,7 @@ export const ArtifactSection: React.FC<ArtifactSectionProps> = ({
   setNewArtifactLinkedValue,
   handleAddArtifact,
   handleRemoveArtifact,
+  readOnly = false,
 }) => {
   return (
     <div className="space-y-4">
@@ -45,28 +47,32 @@ export const ArtifactSection: React.FC<ArtifactSectionProps> = ({
                 {artifact.linkedValue && ` → ${artifact.linkedValue}`}
               </div>
             </div>
-            <button
-              className="text-muted-foreground hover:text-foreground"
-              onClick={() => handleRemoveArtifact(index)}
-            >
-              ×
-            </button>
+            {!readOnly && (
+              <button
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => handleRemoveArtifact(index)}
+              >
+                ×
+              </button>
+            )}
           </div>
         ))}
       </div>
 
-      <ArtifactField
-        artifactType={newArtifactType}
-        artifactName={newArtifactName}
-        artifactValue={newArtifactValue}
-        artifactLinkedValue={newArtifactLinkedValue}
-        onTypeChange={setNewArtifactType}
-        onNameChange={setNewArtifactName}
-        onValueChange={setNewArtifactValue}
-        onLinkedValueChange={setNewArtifactLinkedValue}
-        onAdd={handleAddArtifact}
-        recentArtifacts={recentArtifacts}
-      />
+      {!readOnly && (
+        <ArtifactField
+          artifactType={newArtifactType}
+          artifactName={newArtifactName}
+          artifactValue={newArtifactValue}
+          artifactLinkedValue={newArtifactLinkedValue}
+          onTypeChange={setNewArtifactType}
+          onNameChange={setNewArtifactName}
+          onValueChange={setNewArtifactValue}
+          onLinkedValueChange={setNewArtifactLinkedValue}
+          onAdd={handleAddArtifact}
+          recentArtifacts={recentArtifacts}
+        />
+      )}
     </div>
   );
 };
