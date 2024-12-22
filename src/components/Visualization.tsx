@@ -53,7 +53,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
-        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-secondary/90 [&_.react-flow__controls-button]:!bg-secondary/90 [&_.react-flow__controls-button]:!text-foreground [&_.react-flow__controls-button:hover]:!bg-secondary [&_.react-flow__controls-button]:!border-border"
+        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-background/95 [&_.react-flow__controls-button]:!bg-background/95 [&_.react-flow__controls-button]:!text-foreground [&_.react-flow__controls-button:hover]:!bg-accent [&_.react-flow__controls-button]:!border-border [&_.react-flow__controls]:!border [&_.react-flow__controls]:!border-border [&_.react-flow__controls]:!rounded-md [&_.react-flow__controls]:!shadow-md"
       >
         <Background />
         <Controls />
