@@ -80,33 +80,18 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     const currentIndex = siblings.findIndex(e => e.id === event.id);
     
     if (currentIndex === siblings.length - 1) {
-      // If at bottom of siblings list, find the event that comes after the parent
-      const parentEvent = event.parentId 
-        ? events.find(e => e.id === event.parentId)
-        : undefined;
-
-      if (parentEvent) {
-        // Sort events by timestamp to find the next event after the parent
-        const sortedEvents = events
-          .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-        const parentIndex = sortedEvents.findIndex(e => e.id === parentEvent.id);
-        
-        // Find the next event after the parent that isn't one of its children
-        const nextEvent = sortedEvents
-          .slice(parentIndex + 1)
-          .find(e => e.parentId === parentEvent.parentId);
-
-        if (nextEvent) {
-          // Make the current event a child of the next event
-          onUpdateEvent({
-            ...event,
-            parentId: nextEvent.id
-          });
-          toast({
-            title: "Event Moved Down",
-            description: "Event moved to next parent in chain"
-          });
-        }
+      // If at bottom of siblings list, make it a child of the previous sibling
+      const previousSibling = siblings[currentIndex - 1];
+      
+      if (previousSibling) {
+        onUpdateEvent({
+          ...event,
+          parentId: previousSibling.id
+        });
+        toast({
+          title: "Event Moved Down",
+          description: "Event is now a child of the previous sibling"
+        });
       }
       return;
     }
