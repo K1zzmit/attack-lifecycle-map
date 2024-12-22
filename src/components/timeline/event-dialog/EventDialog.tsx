@@ -11,12 +11,12 @@ import { DialogHeader } from './DialogHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import splStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/vs2015';
-import kql from 'react-syntax-highlighter/dist/esm/languages/hljs/kql';
-import splunk from 'react-syntax-highlighter/dist/esm/languages/hljs/splunk';
+import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
+import shell from 'react-syntax-highlighter/dist/esm/languages/hljs/shell';
 
 // Register the languages
-SyntaxHighlighter.registerLanguage('kql', kql);
-SyntaxHighlighter.registerLanguage('splunk', splunk);
+SyntaxHighlighter.registerLanguage('sql', sql);
+SyntaxHighlighter.registerLanguage('shell', shell);
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -87,12 +87,9 @@ export const EventDialog: React.FC<EventDialogProps> = ({
 
   const detectQueryLanguage = (query: string): string => {
     if (query.toLowerCase().includes('search') || query.toLowerCase().includes('index=')) {
-      return 'splunk';
+      return 'shell'; // For Splunk queries
     }
-    if (query.toLowerCase().includes('union') || query.toLowerCase().includes('project')) {
-      return 'kql';
-    }
-    return 'plaintext';
+    return 'sql'; // For KQL and other SQL-like queries
   };
 
   if (!isEditMode) {
@@ -200,4 +197,3 @@ export const EventDialog: React.FC<EventDialogProps> = ({
       </DialogFooter>
     </DialogContent>
   );
-};
