@@ -25,7 +25,6 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   useEffect(() => {
     const { nodes: layoutNodes, edges: layoutEdges } = calculateLayout(events);
     
-    // Transform nodes to include the custom TimelineNode component and properly type the event data
     const nodesWithCustomRenderer = layoutNodes.map(node => ({
       ...node,
       data: { 
@@ -54,7 +53,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
-        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-secondary [&_.react-flow__controls-button]:!bg-secondary [&_.react-flow__controls-button]:!text-secondary-foreground [&_.react-flow__controls-button]:hover:!bg-secondary/80"
+        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-secondary/90 [&_.react-flow__controls-button]:!bg-secondary/90 [&_.react-flow__controls-button]:!text-foreground [&_.react-flow__controls-button:hover]:!bg-secondary [&_.react-flow__controls-button]:!border-border"
       >
         <Background />
         <Controls />
