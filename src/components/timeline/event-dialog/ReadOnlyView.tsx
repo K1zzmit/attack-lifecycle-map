@@ -7,11 +7,11 @@ import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import type { TimelineEvent } from '@/pages/Index';
 import { EventForm } from './EventForm';
 import { DialogHeader } from './DialogHeader';
-import Highlighter from 'highlighter/languages/splunk';
+import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
 
 // Register the languages
 SyntaxHighlighter.registerLanguage('sql', sql);
-SyntaxHighlighter.registerLanguage('splunk', Highlighter);
+SyntaxHighlighter.registerLanguage('splunk', bash);
 
 interface ReadOnlyViewProps {
   event: TimelineEvent;
