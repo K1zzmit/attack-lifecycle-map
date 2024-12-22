@@ -56,7 +56,7 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     // Get the previous sibling's timestamp
     const previousSibling = siblings[currentIndex - 1];
     
-    // Swap timestamps to reorder
+    // Swap timestamps to reorder within current parent
     onUpdateEvent({
       ...event,
       timestamp: previousSibling.timestamp
