@@ -9,6 +9,7 @@ interface EventItemProps {
   events: TimelineEvent[];
   onClick: (event: TimelineEvent) => void;
   onDelete: (eventId: string) => void;
+  onUpdateEvent: (event: TimelineEvent) => void;
   parentEvent?: TimelineEvent;
   depth?: number;
   isLinkingMode?: boolean;
@@ -20,6 +21,7 @@ export const EventItem: React.FC<EventItemProps> = ({
   events,
   onClick,
   onDelete,
+  onUpdateEvent,
   parentEvent,
   depth = 0,
   isLinkingMode = false,
@@ -118,8 +120,8 @@ export const EventItem: React.FC<EventItemProps> = ({
           <EventContent event={event} parentEvent={parentEvent} />
           <EventActions 
             eventId={event.id}
-            onAddChild={onClick}
             onDelete={onDelete}
+            onUpdateEvent={onUpdateEvent}
           />
         </div>
       </div>
