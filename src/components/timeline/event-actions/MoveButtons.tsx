@@ -80,23 +80,33 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     const currentIndex = siblings.findIndex(e => e.id === event.id);
     
     if (currentIndex === siblings.length - 1) {
-      // If at bottom of siblings list, find next potential parent
-      const allEvents = events.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-      const currentEventIndex = allEvents.findIndex(e => e.id === event.id);
-      
-      // Find the next event that could be a parent
-      const nextPotentialParent = allEvents.slice(currentEventIndex + 1)
-        .find(e => !e.parentId || e.parentId === event.parentId);
-      
-      if (nextPotentialParent) {
-        onUpdateEvent({
-          ...event,
-          parentId: nextPotentialParent.id
-        });
-        toast({
-          title: "Event Moved Down",
-          description: "Event moved to next parent"
-        });
+      // If at bottom of siblings list, find the event that comes after the parent
+      const parentEvent = event.parentId 
+        ? events.find(e => e.id === event.parentId)
+        : undefined;
+
+      if (parentEvent) {
+        // Sort events by timestamp to find the next event after the parent
+        const sortedEvents = events
+          .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+        const parentIndex = sortedEvents.findIndex(e => e.id === parentEvent.id);
+        
+        // Find the next event after the parent that isn't one of its children
+        const nextEvent = sortedEvents
+          .slice(parentIndex + 1)
+          .find(e => e.parentId === parentEvent.parentId);
+
+        if (nextEvent) {
+          // Make the current event a child of the next event
+          onUpdateEvent({
+            ...event,
+            parentId: nextEvent.id
+          });
+          toast({
+            title: "Event Moved Down",
+            description: "Event moved to next parent in chain"
+          });
+        }
       }
       return;
     }
@@ -104,7 +114,7 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     // Get the next sibling's timestamp
     const nextSibling = siblings[currentIndex + 1];
     
-    // Swap timestamps to reorder
+    // Swap timestamps to reorder within current parent
     onUpdateEvent({
       ...event,
       timestamp: nextSibling.timestamp
