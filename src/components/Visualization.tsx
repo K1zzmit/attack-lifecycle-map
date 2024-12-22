@@ -25,10 +25,12 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   useEffect(() => {
     const { nodes: layoutNodes, edges: layoutEdges } = calculateLayout(events);
     
-    // Transform nodes to include the custom TimelineNode component
+    // Transform nodes to include the custom TimelineNode component and properly type the event data
     const nodesWithCustomRenderer = layoutNodes.map(node => ({
       ...node,
-      data: { label: <TimelineNode event={node.data.label} /> }
+      data: { 
+        label: <TimelineNode event={node.data.label as TimelineEvent} /> 
+      }
     }));
 
     setNodes(nodesWithCustomRenderer);
