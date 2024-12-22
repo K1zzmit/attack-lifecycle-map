@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ActionButtonsProps {
   onEdit: (e: React.MouseEvent) => void;
@@ -27,7 +27,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         onClick={onDelete}
         className="h-8 w-8"
       >
-        <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
+        <Trash2 className="h-4 w-4" />
       </Button>
     </>
   );
