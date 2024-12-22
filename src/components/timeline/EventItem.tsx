@@ -11,6 +11,8 @@ interface EventItemProps {
   onDelete: (eventId: string) => void;
   parentEvent?: TimelineEvent;
   depth?: number;
+  isLinkingMode?: boolean;
+  isLinkSource?: boolean;
 }
 
 export const EventItem: React.FC<EventItemProps> = ({ 
@@ -20,6 +22,8 @@ export const EventItem: React.FC<EventItemProps> = ({
   onDelete,
   parentEvent,
   depth = 0,
+  isLinkingMode = false,
+  isLinkSource = false,
 }) => {
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: event.id,
@@ -117,6 +121,8 @@ export const EventItem: React.FC<EventItemProps> = ({
       <div
         className={`timeline-event mb-4 animate-fade-in p-4 rounded-none transition-all duration-200 group ${
           isOver ? 'scale-95 shadow-lg ring-2 ring-primary' : ''
+        } ${isLinkingMode ? 'cursor-pointer hover:ring-2 hover:ring-primary' : ''} ${
+          isLinkSource ? 'ring-2 ring-primary bg-primary/10' : ''
         }`}
         onClick={() => onClick(event)}
         style={{

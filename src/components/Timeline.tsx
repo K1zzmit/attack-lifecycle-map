@@ -24,8 +24,35 @@ const Timeline: React.FC<TimelineProps> = ({
 }) => {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLinkingMode, setIsLinkingMode] = useState(false);
+  const [linkSourceEvent, setLinkSourceEvent] = useState<TimelineEvent | null>(null);
 
   const handleEventClick = (event: TimelineEvent) => {
+    if (isLinkingMode) {
+      if (!linkSourceEvent) {
+        setLinkSourceEvent(event);
+        return;
+      }
+
+      // Prevent self-linking
+      if (linkSourceEvent.id === event.id) {
+        setIsLinkingMode(false);
+        setLinkSourceEvent(null);
+        return;
+      }
+
+      // Update the target event with the new parent
+      const updatedEvent = {
+        ...event,
+        parentId: linkSourceEvent.id,
+      };
+
+      onUpdateEvent(updatedEvent);
+      setIsLinkingMode(false);
+      setLinkSourceEvent(null);
+      return;
+    }
+
     setSelectedEvent(event);
     setIsDialogOpen(true);
     onSelectEvent(event);
@@ -41,12 +68,17 @@ const Timeline: React.FC<TimelineProps> = ({
   return (
     <TimelineProvider>
       <Card className="h-full bg-background/50 backdrop-blur">
-        <TimelineHeader onAddEvent={onAddEvent} />
+        <TimelineHeader 
+          onAddEvent={onAddEvent} 
+          onQuickLink={() => setIsLinkingMode(true)} 
+        />
         <TimelineList
           events={events}
           onSelectEvent={handleEventClick}
           onUpdateEvent={onUpdateEvent}
           onDeleteEvent={onDeleteEvent}
+          isLinkingMode={isLinkingMode}
+          linkSourceEvent={linkSourceEvent}
         />
       </Card>
 

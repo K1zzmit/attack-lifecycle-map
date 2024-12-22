@@ -10,13 +10,17 @@ interface TimelineListProps {
   onSelectEvent: (event: TimelineEvent) => void;
   onUpdateEvent: (event: TimelineEvent) => void;
   onDeleteEvent?: (eventId: string) => void;
+  isLinkingMode?: boolean;
+  linkSourceEvent?: TimelineEvent | null;
 }
 
 export const TimelineList = ({ 
   events,
   onSelectEvent,
   onUpdateEvent,
-  onDeleteEvent 
+  onDeleteEvent,
+  isLinkingMode = false,
+  linkSourceEvent = null
 }: TimelineListProps) => {
   const { toast } = useTimelineContext();
   
@@ -99,6 +103,8 @@ export const TimelineList = ({
               onDelete={onDeleteEvent}
               parentEvent={events.find(e => e.id === event.parentId)}
               depth={event.depth}
+              isLinkingMode={isLinkingMode}
+              isLinkSource={linkSourceEvent?.id === event.id}
             />
           ))}
         </div>
