@@ -197,3 +197,4 @@ export const EventDialog: React.FC<EventDialogProps> = ({
       </DialogFooter>
     </DialogContent>
   );
+};
