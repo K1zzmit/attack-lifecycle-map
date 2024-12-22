@@ -6,16 +6,10 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import type { TimelineEvent, Artifact } from '@/pages/Index';
-import { MitreTacticField } from './fields/MitreTacticField';
-import { ChevronDown, ChevronUp, X, Upload } from 'lucide-react';
-import { ArtifactField } from './fields/ArtifactField';
+import { EventForm } from './event-dialog/EventForm';
+import { EventDetails } from './event-dialog/EventDetails';
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -34,7 +28,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
   const [newArtifactName, setNewArtifactName] = useState('');
   const [newArtifactValue, setNewArtifactValue] = useState('');
   const [newArtifactLinkedValue, setNewArtifactLinkedValue] = useState('');
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   if (!event) return null;
 
@@ -82,180 +76,50 @@ export const EventDialog: React.FC<EventDialogProps> = ({
     });
   };
 
-  const handleArtifactValueChange = (value: string) => {
-    console.log('EventDialog handleArtifactValueChange:', value);
-    setNewArtifactValue(value);
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // For now, we'll just store the file name. In a real application,
-      // you'd want to handle file upload to a server and store the URL
-      onEventChange({
-        ...event,
-        attachedFile: file.name,
-      });
-    }
-  };
-
   return (
-    <DialogContent className="sm:max-w-[900px] max-h-[80vh] overflow-y-auto">
+    <DialogContent className="sm:max-w-[900px]">
       <DialogHeader>
-        <DialogTitle>Edit Event</DialogTitle>
+        <div className="flex justify-between items-center">
+          <DialogTitle>{showDetails ? "Event Details" : "Edit Event"}</DialogTitle>
+          <Button
+            variant="outline"
+            onClick={() => setShowDetails(!showDetails)}
+          >
+            {showDetails ? "Edit Event" : "Additional Details"}
+          </Button>
+        </div>
         <DialogDescription>
-          Add or modify event details and artifacts
+          {showDetails 
+            ? "View and edit additional event details"
+            : "Add or modify event details and artifacts"
+          }
         </DialogDescription>
       </DialogHeader>
-      <div className="grid grid-cols-[2fr,1fr] gap-6">
-        <div className="space-y-4">
-          <div className="grid gap-2">
-            <Label htmlFor="timestamp">Timestamp</Label>
-            <Input
-              id="timestamp"
-              type="datetime-local"
-              value={event.timestamp || ''}
-              onChange={(e) => onEventChange({ ...event, timestamp: e.target.value })}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={event.title || ''}
-              onChange={(e) => onEventChange({ ...event, title: e.target.value })}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={event.description || ''}
-              onChange={(e) => onEventChange({ ...event, description: e.target.value })}
-            />
-          </div>
 
-          <MitreTacticField event={event} onEventChange={onEventChange} />
+      {showDetails ? (
+        <EventDetails
+          event={event}
+          onEventChange={onEventChange}
+        />
+      ) : (
+        <EventForm
+          event={event}
+          events={events}
+          onEventChange={onEventChange}
+          recentArtifacts={recentArtifacts}
+          newArtifactType={newArtifactType}
+          newArtifactName={newArtifactName}
+          newArtifactValue={newArtifactValue}
+          newArtifactLinkedValue={newArtifactLinkedValue}
+          setNewArtifactType={setNewArtifactType}
+          setNewArtifactName={setNewArtifactName}
+          setNewArtifactValue={setNewArtifactValue}
+          setNewArtifactLinkedValue={setNewArtifactLinkedValue}
+          handleAddArtifact={handleAddArtifact}
+          handleRemoveArtifact={handleRemoveArtifact}
+        />
+      )}
 
-          <div className="grid gap-2">
-            <Label htmlFor="parentId">Connected to Event</Label>
-            <Select
-              value={event.parentId || 'none'}
-              onValueChange={(value) => {
-                onEventChange({
-                  ...event,
-                  parentId: value === 'none' ? undefined : value,
-                });
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select parent event" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                {events
-                  .filter(e => e.id !== event.id)
-                  .map(e => (
-                    <SelectItem key={e.id} value={e.id}>
-                      {e.title || 'Untitled Event'}
-                    </SelectItem>
-                  ))
-                }
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-4">
-            <Label>Artifacts</Label>
-            <div className="grid gap-4">
-              {event.artifacts?.map((artifact, index) => (
-                <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                  <div className="flex-1">
-                    <div className="font-medium">{artifact.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {artifact.value}
-                      {artifact.linkedValue && ` → ${artifact.linkedValue}`}
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveArtifact(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-
-            <ArtifactField
-              artifactType={newArtifactType}
-              artifactName={newArtifactName}
-              artifactValue={newArtifactValue}
-              artifactLinkedValue={newArtifactLinkedValue}
-              onTypeChange={setNewArtifactType}
-              onNameChange={setNewArtifactName}
-              onValueChange={handleArtifactValueChange}
-              onLinkedValueChange={setNewArtifactLinkedValue}
-              onAdd={handleAddArtifact}
-              recentArtifacts={recentArtifacts}
-            />
-          </div>
-        </div>
-
-        <div className="border-l pl-6">
-          <div className="space-y-4">
-            <h3 className="font-medium">Additional Details</h3>
-            <div className="grid gap-2">
-              <Label htmlFor="searchQuery">Search Query Used</Label>
-              <Input
-                id="searchQuery"
-                value={event.searchQuery || ''}
-                onChange={(e) => onEventChange({ ...event, searchQuery: e.target.value })}
-                placeholder="Enter the search query used to find this event"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="rawLog">Raw Log</Label>
-              <Textarea
-                id="rawLog"
-                value={event.rawLog || ''}
-                onChange={(e) => onEventChange({ ...event, rawLog: e.target.value })}
-                placeholder="Paste the raw log data here"
-                className="font-mono text-sm"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="file">Attach File</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="file"
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => document.getElementById('file')?.click()}
-                  className="w-full"
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {event.attachedFile || 'Upload File'}
-                </Button>
-                {event.attachedFile && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEventChange({ ...event, attachedFile: undefined })}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <DialogFooter>
         <Button onClick={onSave}>Save Changes</Button>
       </DialogFooter>
