@@ -1,5 +1,6 @@
 import React from 'react';
 import type { TimelineEvent } from '@/pages/Index';
+import { Search, FileText, Paperclip } from 'lucide-react';
 
 interface EventContentProps {
   event: TimelineEvent;
@@ -43,6 +44,27 @@ export const EventContent: React.FC<EventContentProps> = ({ event, parentEvent }
           Parent: {parentEvent.title || 'Unknown Event'}
         </div>
       )}
+
+      <div className="flex gap-2 mt-2">
+        {event.searchQuery && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Search className="h-3 w-3" />
+            <span>Search</span>
+          </div>
+        )}
+        {event.rawLog && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <FileText className="h-3 w-3" />
+            <span>Log</span>
+          </div>
+        )}
+        {event.attachedFile && (
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Paperclip className="h-3 w-3" />
+            <span>File</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
