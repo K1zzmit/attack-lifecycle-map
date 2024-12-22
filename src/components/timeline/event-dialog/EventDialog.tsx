@@ -9,6 +9,14 @@ import { EventForm } from './EventForm';
 import { EventDetails } from './EventDetails';
 import { DialogHeader } from './DialogHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import splStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/vs2015';
+import kql from 'react-syntax-highlighter/dist/esm/languages/hljs/kql';
+import splunk from 'react-syntax-highlighter/dist/esm/languages/hljs/splunk';
+
+// Register the languages
+SyntaxHighlighter.registerLanguage('kql', kql);
+SyntaxHighlighter.registerLanguage('splunk', splunk);
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -77,6 +85,16 @@ export const EventDialog: React.FC<EventDialogProps> = ({
     });
   };
 
+  const detectQueryLanguage = (query: string): string => {
+    if (query.toLowerCase().includes('search') || query.toLowerCase().includes('index=')) {
+      return 'splunk';
+    }
+    if (query.toLowerCase().includes('union') || query.toLowerCase().includes('project')) {
+      return 'kql';
+    }
+    return 'plaintext';
+  };
+
   if (!isEditMode) {
     return (
       <DialogContent className="sm:max-w-[900px]">
@@ -110,9 +128,20 @@ export const EventDialog: React.FC<EventDialogProps> = ({
           {event.searchQuery && (
             <TabsContent value="search" className="space-y-4">
               <h3 className="text-lg font-medium">Search Query</h3>
-              <pre className="bg-muted p-4 rounded-lg overflow-auto">
-                {event.searchQuery}
-              </pre>
+              <div className="min-h-[200px] max-h-[400px] overflow-auto">
+                <SyntaxHighlighter
+                  language={detectQueryLanguage(event.searchQuery)}
+                  style={splStyle}
+                  customStyle={{
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.25rem',
+                  }}
+                >
+                  {event.searchQuery}
+                </SyntaxHighlighter>
+              </div>
             </TabsContent>
           )}
           {event.rawLog && (
