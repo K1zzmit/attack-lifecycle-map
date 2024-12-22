@@ -3,15 +3,15 @@ import { DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import splStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/vs2015';
+import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
-import shell from 'react-syntax-highlighter/dist/esm/languages/hljs/shell';
 import type { TimelineEvent } from '@/pages/Index';
 import { EventForm } from './EventForm';
 import { DialogHeader } from './DialogHeader';
 
 // Register the languages
 SyntaxHighlighter.registerLanguage('sql', sql);
-SyntaxHighlighter.registerLanguage('shell', shell);
+SyntaxHighlighter.registerLanguage('splunk', bash);
 
 interface ReadOnlyViewProps {
   event: TimelineEvent;
@@ -38,9 +38,9 @@ const detectQueryLanguage = (query: string): string => {
   const isSplunk = splunkPatterns.some(pattern => lowerQuery.includes(pattern.toLowerCase()));
   
   if (isSplunk) {
-    return 'shell'; // Using shell highlighting for Splunk as it provides good coloring for pipes and commands
+    return 'splunk';
   }
-  return 'sql'; // Default to SQL for other query types
+  return 'sql';
 };
 
 export const ReadOnlyView: React.FC<ReadOnlyViewProps> = ({
@@ -89,7 +89,9 @@ export const ReadOnlyView: React.FC<ReadOnlyViewProps> = ({
                   borderRadius: '0.5rem',
                   fontSize: '0.875rem',
                   lineHeight: '1.25rem',
+                  backgroundColor: 'var(--code-bg)',
                 }}
+                showLineNumbers={true}
               >
                 {event.searchQuery}
               </SyntaxHighlighter>
