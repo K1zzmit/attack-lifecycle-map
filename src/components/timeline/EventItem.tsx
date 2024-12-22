@@ -122,6 +122,9 @@ export const EventItem: React.FC<EventItemProps> = ({
             eventId={event.id}
             onDelete={onDelete}
             onUpdateEvent={onUpdateEvent}
+            event={event}
+            events={events}
+            onEdit={() => onClick(event)}
           />
         </div>
       </div>
