@@ -68,10 +68,7 @@ const Timeline: React.FC<TimelineProps> = ({
   return (
     <TimelineProvider>
       <Card className="h-full bg-background/50 backdrop-blur">
-        <TimelineHeader 
-          onAddEvent={onAddEvent} 
-          onQuickLink={() => setIsLinkingMode(true)} 
-        />
+        <TimelineHeader onAddEvent={onAddEvent} />
         <TimelineList
           events={events}
           onSelectEvent={handleEventClick}
