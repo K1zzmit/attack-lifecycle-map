@@ -4,9 +4,10 @@ import { useTimelineContext } from './TimelineContext';
 
 interface TimelineHeaderProps {
   onAddEvent: () => void;
+  onQuickLink: () => void;
 }
 
-export const TimelineHeader = ({ onAddEvent }: TimelineHeaderProps) => {
+export const TimelineHeader = ({ onAddEvent, onQuickLink }: TimelineHeaderProps) => {
   const { toast } = useTimelineContext();
 
   const handleQuickLink = () => {
@@ -14,6 +15,7 @@ export const TimelineHeader = ({ onAddEvent }: TimelineHeaderProps) => {
       title: "Quick Link Mode",
       description: "Click two events to link them together. The first event will be the parent.",
     });
+    onQuickLink();
   };
 
   return (
