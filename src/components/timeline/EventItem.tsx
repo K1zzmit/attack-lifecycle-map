@@ -1,7 +1,7 @@
 import React from 'react';
 import type { TimelineEvent } from '@/pages/Index';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import { Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 
 interface EventItemProps {
@@ -110,6 +110,19 @@ export const EventItem: React.FC<EventItemProps> = ({
     onDelete(event.id);
   };
 
+  const handleAddChild = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newEvent: TimelineEvent = {
+      id: crypto.randomUUID(),
+      timestamp: new Date().toISOString().slice(0, 16),
+      title: "",
+      description: "",
+      parentId: event.id,
+      artifacts: [],
+    };
+    onClick(newEvent);
+  };
+
   return (
     <div 
       className="relative" 
@@ -174,14 +187,23 @@ export const EventItem: React.FC<EventItemProps> = ({
             )}
           </div>
           
-          <Button
-            variant="ghost"
-            size="icon"
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={handleDelete}
-          >
-            <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
-          </Button>
+          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleAddChild}
+              title="Add Child Event"
+            >
+              <Plus className="h-4 w-4 text-primary hover:text-primary/80" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
