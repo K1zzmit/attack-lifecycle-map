@@ -12,6 +12,7 @@ interface TimelineListProps {
   onDeleteEvent?: (eventId: string) => void;
   isLinkingMode?: boolean;
   linkSourceEvent?: TimelineEvent | null;
+  isEditMode: boolean;
 }
 
 export const TimelineList = ({ 
@@ -20,7 +21,8 @@ export const TimelineList = ({
   onUpdateEvent,
   onDeleteEvent,
   isLinkingMode = false,
-  linkSourceEvent = null
+  linkSourceEvent = null,
+  isEditMode
 }: TimelineListProps) => {
   const { toast } = useTimelineContext();
   
@@ -33,6 +35,8 @@ export const TimelineList = ({
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (!isEditMode) return;
+    
     const { active, over } = event;
     
     if (!over || active.id === over.id) return;
