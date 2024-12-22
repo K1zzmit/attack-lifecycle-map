@@ -78,7 +78,7 @@ export const EventForm: React.FC<EventFormProps> = ({
       <MitreTacticField event={event} onEventChange={onEventChange} />
 
       <div className="grid gap-2">
-        <Label htmlFor="parentId">Connected to Event</Label>
+        <Label htmlFor="parentId">Parent</Label>
         <Select
           value={event.parentId || 'none'}
           onValueChange={(value) => {
