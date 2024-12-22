@@ -40,7 +40,7 @@ export const EventContent: React.FC<EventContentProps> = ({ event, parentEvent }
       
       {parentEvent && (
         <div className="mt-2 text-xs text-muted-foreground">
-          Connected to: {parentEvent.title || 'Unknown Event'}
+          Parent: {parentEvent.title || 'Unknown Event'}
         </div>
       )}
     </div>
