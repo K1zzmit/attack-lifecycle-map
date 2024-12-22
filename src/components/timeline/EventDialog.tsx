@@ -100,53 +100,113 @@ export const EventDialog: React.FC<EventDialogProps> = ({
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+    <DialogContent className="sm:max-w-[900px] max-h-[80vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Edit Event</DialogTitle>
         <DialogDescription>
           Add or modify event details and artifacts
         </DialogDescription>
       </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <div className="grid gap-2">
-          <Label htmlFor="timestamp">Timestamp</Label>
-          <Input
-            id="timestamp"
-            type="datetime-local"
-            value={event.timestamp || ''}
-            onChange={(e) => onEventChange({ ...event, timestamp: e.target.value })}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            value={event.title || ''}
-            onChange={(e) => onEventChange({ ...event, title: e.target.value })}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={event.description || ''}
-            onChange={(e) => onEventChange({ ...event, description: e.target.value })}
-          />
+      <div className="grid grid-cols-[2fr,1fr] gap-6">
+        <div className="space-y-4">
+          <div className="grid gap-2">
+            <Label htmlFor="timestamp">Timestamp</Label>
+            <Input
+              id="timestamp"
+              type="datetime-local"
+              value={event.timestamp || ''}
+              onChange={(e) => onEventChange({ ...event, timestamp: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              value={event.title || ''}
+              onChange={(e) => onEventChange({ ...event, title: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={event.description || ''}
+              onChange={(e) => onEventChange({ ...event, description: e.target.value })}
+            />
+          </div>
+
+          <MitreTacticField event={event} onEventChange={onEventChange} />
+
+          <div className="grid gap-2">
+            <Label htmlFor="parentId">Connected to Event</Label>
+            <Select
+              value={event.parentId || 'none'}
+              onValueChange={(value) => {
+                onEventChange({
+                  ...event,
+                  parentId: value === 'none' ? undefined : value,
+                });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select parent event" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {events
+                  .filter(e => e.id !== event.id)
+                  .map(e => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.title || 'Untitled Event'}
+                    </SelectItem>
+                  ))
+                }
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-4">
+            <Label>Artifacts</Label>
+            <div className="grid gap-4">
+              {event.artifacts?.map((artifact, index) => (
+                <div key={index} className="flex items-center gap-2 p-2 border rounded">
+                  <div className="flex-1">
+                    <div className="font-medium">{artifact.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {artifact.value}
+                      {artifact.linkedValue && ` → ${artifact.linkedValue}`}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveArtifact(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <ArtifactField
+              artifactType={newArtifactType}
+              artifactName={newArtifactName}
+              artifactValue={newArtifactValue}
+              artifactLinkedValue={newArtifactLinkedValue}
+              onTypeChange={setNewArtifactType}
+              onNameChange={setNewArtifactName}
+              onValueChange={handleArtifactValueChange}
+              onLinkedValueChange={setNewArtifactLinkedValue}
+              onAdd={handleAddArtifact}
+              recentArtifacts={recentArtifacts}
+            />
+          </div>
         </div>
 
-        <Collapsible open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="flex w-full justify-between">
-              Additional Details
-              {isDetailsOpen ? (
-                <ChevronUp className="h-4 w-4" />
-              ) : (
-                <ChevronDown className="h-4 w-4" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-4">
-            <div className="grid gap-2 mt-4">
+        <div className="border-l pl-6">
+          <div className="space-y-4">
+            <h3 className="font-medium">Additional Details</h3>
+            <div className="grid gap-2">
               <Label htmlFor="searchQuery">Search Query Used</Label>
               <Input
                 id="searchQuery"
@@ -193,74 +253,7 @@ export const EventDialog: React.FC<EventDialogProps> = ({
                 )}
               </div>
             </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-        <MitreTacticField event={event} onEventChange={onEventChange} />
-
-        <div className="grid gap-2">
-          <Label htmlFor="parentId">Connected to Event</Label>
-          <Select
-            value={event.parentId || 'none'}
-            onValueChange={(value) => {
-              onEventChange({
-                ...event,
-                parentId: value === 'none' ? undefined : value,
-              });
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select parent event" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              {events
-                .filter(e => e.id !== event.id)
-                .map(e => (
-                  <SelectItem key={e.id} value={e.id}>
-                    {e.title || 'Untitled Event'}
-                  </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-4">
-          <Label>Artifacts</Label>
-          <div className="grid gap-4">
-            {event.artifacts?.map((artifact, index) => (
-              <div key={index} className="flex items-center gap-2 p-2 border rounded">
-                <div className="flex-1">
-                  <div className="font-medium">{artifact.name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {artifact.value}
-                    {artifact.linkedValue && ` → ${artifact.linkedValue}`}
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveArtifact(index)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
           </div>
-
-          <ArtifactField
-            artifactType={newArtifactType}
-            artifactName={newArtifactName}
-            artifactValue={newArtifactValue}
-            artifactLinkedValue={newArtifactLinkedValue}
-            onTypeChange={setNewArtifactType}
-            onNameChange={setNewArtifactName}
-            onValueChange={handleArtifactValueChange}
-            onLinkedValueChange={setNewArtifactLinkedValue}
-            onAdd={handleAddArtifact}
-            recentArtifacts={recentArtifacts}
-          />
         </div>
       </div>
       <DialogFooter>
