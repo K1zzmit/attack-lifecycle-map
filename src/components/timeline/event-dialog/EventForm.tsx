@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { TimelineEvent, Artifact } from '@/pages/Index';
 import { MitreTacticField } from '../fields/MitreTacticField';
-import { ArtifactField } from '../fields/ArtifactField';
+import { ArtifactSection } from './form/ArtifactSection';
 
 interface EventFormProps {
   event: TimelineEvent;
@@ -98,41 +98,20 @@ export const EventForm: React.FC<EventFormProps> = ({
         </Select>
       </div>
 
-      <div className="space-y-4">
-        <Label>Artifacts</Label>
-        <div className="grid gap-4">
-          {event.artifacts?.map((artifact, index) => (
-            <div key={index} className="flex items-center gap-2 p-2 border rounded">
-              <div className="flex-1">
-                <div className="font-medium">{artifact.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {artifact.value}
-                  {artifact.linkedValue && ` → ${artifact.linkedValue}`}
-                </div>
-              </div>
-              <button
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => handleRemoveArtifact(index)}
-              >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <ArtifactField
-          artifactType={newArtifactType}
-          artifactName={newArtifactName}
-          artifactValue={newArtifactValue}
-          artifactLinkedValue={newArtifactLinkedValue}
-          onTypeChange={setNewArtifactType}
-          onNameChange={setNewArtifactName}
-          onValueChange={setNewArtifactValue}
-          onLinkedValueChange={setNewArtifactLinkedValue}
-          onAdd={handleAddArtifact}
-          recentArtifacts={recentArtifacts}
-        />
-      </div>
+      <ArtifactSection
+        artifacts={event.artifacts}
+        recentArtifacts={recentArtifacts}
+        newArtifactType={newArtifactType}
+        newArtifactName={newArtifactName}
+        newArtifactValue={newArtifactValue}
+        newArtifactLinkedValue={newArtifactLinkedValue}
+        setNewArtifactType={setNewArtifactType}
+        setNewArtifactName={setNewArtifactName}
+        setNewArtifactValue={setNewArtifactValue}
+        setNewArtifactLinkedValue={setNewArtifactLinkedValue}
+        handleAddArtifact={handleAddArtifact}
+        handleRemoveArtifact={handleRemoveArtifact}
+      />
     </div>
   );
 };

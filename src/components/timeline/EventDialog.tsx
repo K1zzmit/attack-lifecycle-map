@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import type { TimelineEvent, Artifact } from '@/pages/Index';
 import { EventForm } from './event-dialog/EventForm';
 import { EventDetails } from './event-dialog/EventDetails';
+import { DialogHeader } from './event-dialog/DialogHeader';
 
 interface EventDialogProps {
   event: TimelineEvent | null;
@@ -24,11 +22,11 @@ export const EventDialog: React.FC<EventDialogProps> = ({
   onEventChange,
   onSave,
 }) => {
+  const [showDetails, setShowDetails] = useState(false);
   const [newArtifactType, setNewArtifactType] = useState<Artifact['type']>('custom');
   const [newArtifactName, setNewArtifactName] = useState('');
   const [newArtifactValue, setNewArtifactValue] = useState('');
   const [newArtifactLinkedValue, setNewArtifactLinkedValue] = useState('');
-  const [showDetails, setShowDetails] = useState(false);
 
   if (!event) return null;
 
@@ -78,23 +76,10 @@ export const EventDialog: React.FC<EventDialogProps> = ({
 
   return (
     <DialogContent className="sm:max-w-[900px]">
-      <DialogHeader>
-        <div className="flex justify-between items-center">
-          <DialogTitle>{showDetails ? "Event Details" : "Edit Event"}</DialogTitle>
-          <Button
-            variant="outline"
-            onClick={() => setShowDetails(!showDetails)}
-          >
-            {showDetails ? "Edit Event" : "Additional Details"}
-          </Button>
-        </div>
-        <DialogDescription>
-          {showDetails 
-            ? "View and edit additional event details"
-            : "Add or modify event details and artifacts"
-          }
-        </DialogDescription>
-      </DialogHeader>
+      <DialogHeader
+        showDetails={showDetails}
+        onToggleDetails={() => setShowDetails(!showDetails)}
+      />
 
       {showDetails ? (
         <EventDetails
