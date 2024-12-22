@@ -66,6 +66,18 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
       const indexAtLevel = nodesAtLevel.indexOf(event.id);
       const spacing = 250;
       
+      // Format the timestamp to include seconds and timezone
+      const formattedTimestamp = new Date(event.timestamp).toLocaleString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZoneName: 'short'
+      });
+      
       return {
         id: event.id,
         type: 'default',
@@ -73,7 +85,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
           label: (
             <div className="p-2 max-w-[300px] bg-background text-foreground">
               <div className="font-medium truncate">{event.title || 'Untitled Event'}</div>
-              <div className="text-xs text-muted-foreground truncate">{event.timestamp}</div>
+              <div className="text-xs text-muted-foreground truncate">{formattedTimestamp}</div>
               {event.host && (
                 <div className="text-xs mt-1">
                   <span className="font-medium">Host:</span> {event.host}
