@@ -14,13 +14,23 @@ export const sortEvents = (eventsToSort: TimelineEvent[]): TimelineEvent[] => {
     }
   });
 
-  // Sort root events by timestamp
-  rootEvents.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  // Sort root events by order, fallback to timestamp
+  rootEvents.sort((a, b) => {
+    if (a.order !== undefined && b.order !== undefined) {
+      return a.order - b.order;
+    }
+    return a.timestamp.localeCompare(b.timestamp);
+  });
 
   // Function to get all children of an event
   const getAllChildren = (parentId: string): TimelineEvent[] => {
     const children = childEvents.filter(event => event.parentId === parentId);
-    children.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    children.sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
+      return a.timestamp.localeCompare(b.timestamp);
+    });
     return children.reduce((acc, child) => {
       return [...acc, child, ...getAllChildren(child.id)];
     }, [] as TimelineEvent[]);

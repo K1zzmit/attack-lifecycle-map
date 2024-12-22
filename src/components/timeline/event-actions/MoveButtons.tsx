@@ -53,17 +53,20 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
       return;
     }
 
-    // Get the previous sibling's timestamp
+    // Get the previous sibling
     const previousSibling = siblings[currentIndex - 1];
     
-    // Swap timestamps to reorder within current parent
+    // Swap order with previous sibling
+    const currentOrder = event.order || 0;
+    const previousOrder = previousSibling.order || 0;
+    
     onUpdateEvent({
       ...event,
-      timestamp: previousSibling.timestamp
+      order: previousOrder
     });
     onUpdateEvent({
       ...previousSibling,
-      timestamp: event.timestamp
+      order: currentOrder
     });
     
     toast({
@@ -80,13 +83,13 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     const currentIndex = siblings.findIndex(e => e.id === event.id);
     
     if (currentIndex === siblings.length - 1) {
-      // If at bottom of siblings list, make it a child of the previous sibling
-      const previousSibling = siblings[currentIndex - 1];
-      
-      if (previousSibling) {
+      // If at bottom of siblings list, make it a child of previous sibling
+      if (currentIndex > 0) {
+        const previousSibling = siblings[currentIndex - 1];
         onUpdateEvent({
           ...event,
-          parentId: previousSibling.id
+          parentId: previousSibling.id,
+          order: Math.max(...events.filter(e => e.parentId === previousSibling.id).map(e => e.order || 0), 0) + 1
         });
         toast({
           title: "Event Moved Down",
@@ -96,17 +99,20 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
       return;
     }
 
-    // Get the next sibling's timestamp
+    // Get the next sibling
     const nextSibling = siblings[currentIndex + 1];
     
-    // Swap timestamps to reorder within current parent
+    // Swap order with next sibling
+    const currentOrder = event.order || 0;
+    const nextOrder = nextSibling.order || 0;
+    
     onUpdateEvent({
       ...event,
-      timestamp: nextSibling.timestamp
+      order: nextOrder
     });
     onUpdateEvent({
       ...nextSibling,
-      timestamp: event.timestamp
+      order: currentOrder
     });
     
     toast({

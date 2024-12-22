@@ -20,6 +20,7 @@ export interface TimelineEvent {
   technique?: string;
   parentId?: string;
   artifacts: Artifact[];
+  order?: number;
   // Additional fields for event details
   searchQuery?: string;
   rawLog?: string;
