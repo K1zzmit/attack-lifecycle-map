@@ -22,6 +22,7 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     
     // Get siblings (events with same parent)
     const siblings = events.filter(e => e.parentId === event.parentId);
+    siblings.sort((a, b) => (a.order || 0) - (b.order || 0));
     const currentIndex = siblings.findIndex(e => e.id === event.id);
     
     if (currentIndex <= 0) {
@@ -56,17 +57,19 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     // Get the previous sibling
     const previousSibling = siblings[currentIndex - 1];
     
-    // Swap order with previous sibling
-    const currentOrder = event.order || 0;
-    const previousOrder = previousSibling.order || 0;
+    // Calculate new orders to ensure correct positioning
+    const allSiblings = events.filter(e => e.parentId === event.parentId);
+    const maxOrder = Math.max(...allSiblings.map(e => e.order || 0));
+    
+    // Update orders for both events
+    onUpdateEvent({
+      ...previousSibling,
+      order: maxOrder + 1
+    });
     
     onUpdateEvent({
       ...event,
-      order: previousOrder
-    });
-    onUpdateEvent({
-      ...previousSibling,
-      order: currentOrder
+      order: previousSibling.order || 0
     });
     
     toast({
@@ -80,6 +83,7 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     
     // Get siblings (events with same parent)
     const siblings = events.filter(e => e.parentId === event.parentId);
+    siblings.sort((a, b) => (a.order || 0) - (b.order || 0));
     const currentIndex = siblings.findIndex(e => e.id === event.id);
     
     if (currentIndex === siblings.length - 1) {
@@ -102,17 +106,19 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
     // Get the next sibling
     const nextSibling = siblings[currentIndex + 1];
     
-    // Swap order with next sibling
-    const currentOrder = event.order || 0;
-    const nextOrder = nextSibling.order || 0;
+    // Calculate new orders to ensure correct positioning
+    const allSiblings = events.filter(e => e.parentId === event.parentId);
+    const maxOrder = Math.max(...allSiblings.map(e => e.order || 0));
     
+    // Update orders for both events
     onUpdateEvent({
       ...event,
-      order: nextOrder
+      order: nextSibling.order || 0
     });
+    
     onUpdateEvent({
       ...nextSibling,
-      order: currentOrder
+      order: event.order || 0
     });
     
     toast({
