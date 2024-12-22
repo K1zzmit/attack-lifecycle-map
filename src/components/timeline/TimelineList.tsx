@@ -101,6 +101,7 @@ export const TimelineList = ({
               events={events}
               onClick={onSelectEvent}
               onDelete={onDeleteEvent}
+              onUpdateEvent={onUpdateEvent}
               parentEvent={events.find(e => e.id === event.parentId)}
               depth={event.depth}
               isLinkingMode={isLinkingMode}
