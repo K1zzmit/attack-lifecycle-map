@@ -20,10 +20,27 @@ interface ReadOnlyViewProps {
 }
 
 const detectQueryLanguage = (query: string): string => {
-  if (query.toLowerCase().includes('search') || query.toLowerCase().includes('index=')) {
-    return 'shell'; // For Splunk queries
+  // Check for common Splunk SPL patterns
+  const splunkPatterns = [
+    'index=',
+    'sourcetype=',
+    'source=',
+    'host=',
+    '|',
+    'stats',
+    'eval',
+    'table',
+    'rename',
+    'search'
+  ];
+  
+  const lowerQuery = query.toLowerCase();
+  const isSplunk = splunkPatterns.some(pattern => lowerQuery.includes(pattern.toLowerCase()));
+  
+  if (isSplunk) {
+    return 'shell'; // Using shell highlighting for Splunk as it provides good coloring for pipes and commands
   }
-  return 'sql'; // For KQL and other SQL-like queries
+  return 'sql'; // Default to SQL for other query types
 };
 
 export const ReadOnlyView: React.FC<ReadOnlyViewProps> = ({
