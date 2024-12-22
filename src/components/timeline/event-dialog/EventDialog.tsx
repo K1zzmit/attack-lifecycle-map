@@ -5,9 +5,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
 import type { TimelineEvent, Artifact } from '@/pages/Index';
-import { EventForm } from './event-dialog/EventForm';
-import { EventDetails } from './event-dialog/EventDetails';
-import { DialogHeader } from './event-dialog/DialogHeader';
+import { EventForm } from './EventForm';
+import { EventDetails } from './EventDetails';
+import { DialogHeader } from './DialogHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface EventDialogProps {
