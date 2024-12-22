@@ -53,7 +53,21 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
-        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-background/95 [&_.react-flow__controls-button]:!bg-background/95 [&_.react-flow__controls-button]:!text-foreground [&_.react-flow__controls-button:hover]:!bg-accent [&_.react-flow__controls-button]:!border-border [&_.react-flow__controls]:!border [&_.react-flow__controls]:!border-border [&_.react-flow__controls]:!rounded-md [&_.react-flow__controls]:!shadow-md"
+        className="
+          [&_.react-flow__node]:!border-2 
+          [&_.react-flow__node]:!border-border 
+          [&_.react-flow__controls]:!bg-secondary 
+          [&_.react-flow__controls]:!border-2 
+          [&_.react-flow__controls]:!border-border 
+          [&_.react-flow__controls]:!rounded-md 
+          [&_.react-flow__controls]:!shadow-lg 
+          [&_.react-flow__controls-button]:!bg-secondary 
+          [&_.react-flow__controls-button]:!border-border 
+          [&_.react-flow__controls-button]:!text-primary-foreground 
+          [&_.react-flow__controls-button:hover]:!bg-primary 
+          [&_.react-flow__controls-button]:!transition-colors
+          [&_.react-flow__controls-button]:!duration-200
+        "
       >
         <Background />
         <Controls />
