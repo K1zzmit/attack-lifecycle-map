@@ -3,15 +3,15 @@ import { DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import splStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/vs2015';
-import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash';
 import sql from 'react-syntax-highlighter/dist/esm/languages/hljs/sql';
 import type { TimelineEvent } from '@/pages/Index';
 import { EventForm } from './EventForm';
 import { DialogHeader } from './DialogHeader';
+import Highlighter from 'highlighter/languages/splunk';
 
 // Register the languages
 SyntaxHighlighter.registerLanguage('sql', sql);
-SyntaxHighlighter.registerLanguage('splunk', bash);
+SyntaxHighlighter.registerLanguage('splunk', Highlighter);
 
 interface ReadOnlyViewProps {
   event: TimelineEvent;
@@ -92,6 +92,7 @@ export const ReadOnlyView: React.FC<ReadOnlyViewProps> = ({
                   backgroundColor: 'var(--code-bg)',
                 }}
                 showLineNumbers={true}
+                wrapLongLines={true}
               >
                 {event.searchQuery}
               </SyntaxHighlighter>
