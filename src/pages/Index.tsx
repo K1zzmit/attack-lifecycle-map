@@ -20,6 +20,10 @@ export interface TimelineEvent {
   technique?: string;
   parentId?: string;
   artifacts: Artifact[];
+  // Additional fields for event details
+  searchQuery?: string;
+  rawLog?: string;
+  attachedFile?: string;
   // Legacy fields (to maintain compatibility)
   host?: string;
   user?: string;
