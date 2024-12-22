@@ -1,7 +1,7 @@
 import React from 'react';
 import { DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
-import type { TimelineEvent } from '@/pages/Index';
+import type { TimelineEvent, Artifact } from '@/pages/Index';
 import { EventForm } from './EventForm';
 import { EventDetails } from './EventDetails';
 import { DialogHeader } from './DialogHeader';
@@ -15,11 +15,11 @@ interface EditViewProps {
   onToggleDetails: () => void;
   recentArtifacts: { [key: string]: { value: string; linkedValue?: string }[] };
   artifactState: {
-    type: string;
+    type: Artifact['type'];
     name: string;
     value: string;
     linkedValue: string;
-    setType: (type: any) => void;
+    setType: (type: Artifact['type']) => void;
     setName: (name: string) => void;
     setValue: (value: string) => void;
     setLinkedValue: (value: string) => void;
