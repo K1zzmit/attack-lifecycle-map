@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
 
 interface ActionButtonsProps {
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit: (e: React.MouseEvent) => void;
+  onDelete: (e: React.MouseEvent) => void;
 }
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({

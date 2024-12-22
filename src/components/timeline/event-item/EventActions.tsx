@@ -25,6 +25,11 @@ export const EventActions: React.FC<EventActionsProps> = ({
     onDelete(eventId);
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit();
+  };
+
   return (
     <div 
       className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1" 
@@ -36,10 +41,7 @@ export const EventActions: React.FC<EventActionsProps> = ({
         onUpdateEvent={onUpdateEvent}
       />
       <ActionButtons
-        onEdit={(e) => {
-          e?.stopPropagation();
-          onEdit();
-        }}
+        onEdit={handleEdit}
         onDelete={handleDelete}
       />
     </div>
