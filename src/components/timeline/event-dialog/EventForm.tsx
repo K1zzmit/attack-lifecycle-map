@@ -40,6 +40,12 @@ export const EventForm: React.FC<EventFormProps> = ({
   handleAddArtifact,
   handleRemoveArtifact,
 }) => {
+  // Format the timestamp to include seconds
+  const formatTimestampForInput = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toISOString().slice(0, 19);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-2">
@@ -47,8 +53,9 @@ export const EventForm: React.FC<EventFormProps> = ({
         <Input
           id="timestamp"
           type="datetime-local"
-          value={event.timestamp || ''}
+          value={formatTimestampForInput(event.timestamp)}
           onChange={(e) => onEventChange({ ...event, timestamp: e.target.value })}
+          step="1"
         />
       </div>
       <div className="grid gap-2">
