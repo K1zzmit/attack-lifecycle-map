@@ -19,78 +19,105 @@ export const MoveButtons: React.FC<MoveButtonsProps> = ({
 
   const handleMoveUp = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = events.findIndex(e => e.id === event.id);
+    
+    // Get siblings (events with same parent)
+    const siblings = events.filter(e => e.parentId === event.parentId);
+    const currentIndex = siblings.findIndex(e => e.id === event.id);
+    
     if (currentIndex <= 0) {
+      // If at top of siblings list and has a parent, move up to parent's level
       if (event.parentId) {
         const parentEvent = events.find(e => e.id === event.parentId);
         if (parentEvent?.parentId) {
+          // Move to parent's parent
           onUpdateEvent({
             ...event,
             parentId: parentEvent.parentId
           });
           toast({
-            title: "Event Moved",
+            title: "Event Moved Up",
             description: "Event moved up to parent level"
+          });
+        } else {
+          // Make it a root event
+          onUpdateEvent({
+            ...event,
+            parentId: undefined
+          });
+          toast({
+            title: "Event Moved Up",
+            description: "Event moved to root level"
           });
         }
       }
       return;
     }
 
-    const previousSiblings = events.filter(e => e.parentId === event.parentId);
-    const siblingIndex = previousSiblings.findIndex(e => e.id === event.id);
-    if (siblingIndex > 0) {
-      const previousSibling = previousSiblings[siblingIndex - 1];
-      onUpdateEvent({
-        ...event,
-        timestamp: previousSibling.timestamp
-      });
-      onUpdateEvent({
-        ...previousSibling,
-        timestamp: event.timestamp
-      });
-      toast({
-        title: "Event Moved",
-        description: "Event moved up"
-      });
-    }
+    // Get the previous sibling's timestamp
+    const previousSibling = siblings[currentIndex - 1];
+    
+    // Swap timestamps to reorder
+    onUpdateEvent({
+      ...event,
+      timestamp: previousSibling.timestamp
+    });
+    onUpdateEvent({
+      ...previousSibling,
+      timestamp: event.timestamp
+    });
+    
+    toast({
+      title: "Event Moved Up",
+      description: "Event moved up in the timeline"
+    });
   };
 
   const handleMoveDown = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const currentIndex = events.findIndex(e => e.id === event.id);
-    if (currentIndex === events.length - 1) {
-      const nextParentCandidate = events.find(e => e.timestamp > event.timestamp && !e.parentId);
-      if (nextParentCandidate) {
+    
+    // Get siblings (events with same parent)
+    const siblings = events.filter(e => e.parentId === event.parentId);
+    const currentIndex = siblings.findIndex(e => e.id === event.id);
+    
+    if (currentIndex === siblings.length - 1) {
+      // If at bottom of siblings list, find next potential parent
+      const allEvents = events.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+      const currentEventIndex = allEvents.findIndex(e => e.id === event.id);
+      
+      // Find the next event that could be a parent
+      const nextPotentialParent = allEvents.slice(currentEventIndex + 1)
+        .find(e => !e.parentId || e.parentId === event.parentId);
+      
+      if (nextPotentialParent) {
         onUpdateEvent({
           ...event,
-          parentId: nextParentCandidate.id
+          parentId: nextPotentialParent.id
         });
         toast({
-          title: "Event Moved",
+          title: "Event Moved Down",
           description: "Event moved to next parent"
         });
       }
       return;
     }
 
-    const siblings = events.filter(e => e.parentId === event.parentId);
-    const siblingIndex = siblings.findIndex(e => e.id === event.id);
-    if (siblingIndex < siblings.length - 1) {
-      const nextSibling = siblings[siblingIndex + 1];
-      onUpdateEvent({
-        ...event,
-        timestamp: nextSibling.timestamp
-      });
-      onUpdateEvent({
-        ...nextSibling,
-        timestamp: event.timestamp
-      });
-      toast({
-        title: "Event Moved",
-        description: "Event moved down"
-      });
-    }
+    // Get the next sibling's timestamp
+    const nextSibling = siblings[currentIndex + 1];
+    
+    // Swap timestamps to reorder
+    onUpdateEvent({
+      ...event,
+      timestamp: nextSibling.timestamp
+    });
+    onUpdateEvent({
+      ...nextSibling,
+      timestamp: event.timestamp
+    });
+    
+    toast({
+      title: "Event Moved Down",
+      description: "Event moved down in the timeline"
+    });
   };
 
   return (
