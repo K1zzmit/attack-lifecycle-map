@@ -54,10 +54,10 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
-        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border"
+        className="[&_.react-flow__node]:!border-2 [&_.react-flow__node]:!border-border [&_.react-flow__controls]:!bg-secondary [&_.react-flow__controls-button]:!bg-secondary [&_.react-flow__controls-button]:!text-secondary-foreground [&_.react-flow__controls-button]:hover:!bg-secondary/80"
       >
         <Background />
-        <Controls className="!bg-background !border-border" />
+        <Controls />
         <MiniMap 
           className="!bg-background !border-border" 
           nodeColor={getNodeColor}
