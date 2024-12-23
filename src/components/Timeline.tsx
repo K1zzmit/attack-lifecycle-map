@@ -6,7 +6,6 @@ import { EventDialog } from './timeline/EventDialog';
 import { TimelineHeader } from './timeline/TimelineHeader';
 import { TimelineList } from './timeline/TimelineList';
 import { TimelineProvider } from './timeline/TimelineContext';
-import { v4 as uuidv4 } from 'uuid';
 
 interface TimelineProps {
   events: TimelineEvent[];
@@ -63,31 +62,7 @@ const Timeline: React.FC<TimelineProps> = ({
 
   const handleSave = () => {
     if (selectedEvent) {
-      const wasLateralMovement = events.find(e => e.id === selectedEvent.id)?.isLateralMovement;
-      const isNowLateralMovement = selectedEvent.isLateralMovement;
-      
-      // If this is a new lateral movement event, create a child event
-      if (!wasLateralMovement && isNowLateralMovement) {
-        const childEvent: TimelineEvent = {
-          id: uuidv4(),
-          timestamp: new Date().toISOString(),
-          title: `Lateral Movement from ${selectedEvent.title || 'Unknown Source'}`,
-          description: "New system accessed via lateral movement",
-          parentId: selectedEvent.id,
-          artifacts: [],
-          isLateralMovement: true
-        };
-        
-        // First update the parent event
-        onUpdateEvent(selectedEvent);
-        
-        // Then create the child event
-        onUpdateEvent(childEvent);
-      } else {
-        // Regular update without creating child event
-        onUpdateEvent(selectedEvent);
-      }
-      
+      onUpdateEvent(selectedEvent);
       setIsDialogOpen(false);
     }
   };

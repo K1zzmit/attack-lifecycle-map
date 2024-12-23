@@ -9,7 +9,6 @@ import {
   useNodesState,
   useEdgesState,
   GetMiniMapNodeAttribute,
-  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { TimelineNode } from './visualization/TimelineNode';
@@ -17,11 +16,6 @@ import { calculateLayout } from './visualization/layoutUtils';
 
 interface VisualizationProps {
   events: TimelineEvent[];
-}
-
-// Add a type for the node data
-interface NodeData {
-  label: React.ReactElement<{ event: TimelineEvent }>;
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
@@ -42,20 +36,13 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     setEdges(layoutEdges);
   }, [events, setNodes, setEdges]);
 
-  const getNodeColor: GetMiniMapNodeAttribute = (node: Node) => {
-    const nodeData = node.data as { label: React.ReactElement<{ event: TimelineEvent }> };
-    const event = nodeData.label.props.event;
-    
-    if (event.isLateralMovement) {
-      return '#ff6b6b';
-    }
-
+  const getNodeColor: GetMiniMapNodeAttribute = (node) => {
     const colorMap: Record<string, string> = {
       'Initial Access': '#ff0000',
       'Execution': '#00ff00',
       'Persistence': '#0000ff',
     };
-    return colorMap[event.tactic as string] || '#666666';
+    return colorMap[node.data?.tactic as string] || '#666666';
   };
 
   return (
@@ -89,9 +76,6 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
           [&_.react-flow__controls-button_svg]:!h-6
           [&_.react-flow__node]:!border-2 
           [&_.react-flow__node]:!border-border
-          [&_.react-flow__edge-path]:!stroke-[3px]
-          [&_.react-flow__edge.lateral]:!stroke-[#ff6b6b]
-          [&_.react-flow__edge.lateral]:!animate-pulse
         "
       >
         <Background />
