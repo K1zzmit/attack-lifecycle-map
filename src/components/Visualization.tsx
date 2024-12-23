@@ -18,6 +18,11 @@ interface VisualizationProps {
   events: TimelineEvent[];
 }
 
+// Add a type for the node data
+interface NodeData {
+  label: React.ReactNode;
+}
+
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -37,7 +42,12 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   }, [events, setNodes, setEdges]);
 
   const getNodeColor: GetMiniMapNodeAttribute = (node) => {
-    const event = (node.data?.label?.props?.event || {}) as TimelineEvent;
+    // Safely access the event data by first checking if it exists
+    const nodeData = node.data as NodeData | undefined;
+    const timelineNode = nodeData?.label as React.ReactElement<{ event: TimelineEvent }> | undefined;
+    const event = timelineNode?.props?.event;
+    
+    if (!event) return '#666666';
     
     if (event.isLateralMovement) {
       return '#ff6b6b';
