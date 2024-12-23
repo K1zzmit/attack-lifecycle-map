@@ -9,6 +9,7 @@ import {
   useNodesState,
   useEdgesState,
   GetMiniMapNodeAttribute,
+  Node,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { TimelineNode } from './visualization/TimelineNode';
@@ -20,7 +21,7 @@ interface VisualizationProps {
 
 // Add a type for the node data
 interface NodeData {
-  label: React.ReactNode;
+  label: React.ReactElement<{ event: TimelineEvent }>;
 }
 
 const Visualization: React.FC<VisualizationProps> = ({ events }) => {
@@ -41,13 +42,9 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     setEdges(layoutEdges);
   }, [events, setNodes, setEdges]);
 
-  const getNodeColor: GetMiniMapNodeAttribute = (node) => {
-    // Safely access the event data by first checking if it exists
-    const nodeData = node.data as NodeData | undefined;
-    const timelineNode = nodeData?.label as React.ReactElement<{ event: TimelineEvent }> | undefined;
-    const event = timelineNode?.props?.event;
-    
-    if (!event) return '#666666';
+  const getNodeColor: GetMiniMapNodeAttribute = (node: Node) => {
+    const nodeData = node.data as NodeData;
+    const event = nodeData.label.props.event;
     
     if (event.isLateralMovement) {
       return '#ff6b6b';
