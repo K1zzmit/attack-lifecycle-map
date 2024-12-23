@@ -28,7 +28,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     const nodesWithCustomRenderer = layoutNodes.map(node => ({
       ...node,
       data: { 
-        label: <TimelineNode event={node.data.label as TimelineEvent} /> 
+        label: <TimelineNode event={node.data.label} /> 
       }
     }));
 
@@ -37,12 +37,11 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   }, [events, setNodes, setEdges]);
 
   const getNodeColor: GetMiniMapNodeAttribute = (node) => {
-    if (!node.data?.label?.props?.event) return '#666666';
-    const event = node.data.label.props.event as TimelineEvent;
+    if (!node.data?.label?.event) return '#666666';
+    const event = node.data.label.event as TimelineEvent;
     
-    // Color nodes differently if they represent lateral movement
     if (event.isLateralMovement) {
-      return '#ff6b6b'; // Red for lateral movement
+      return '#ff6b6b';
     }
 
     const colorMap: Record<string, string> = {

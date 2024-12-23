@@ -55,10 +55,28 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
     };
   });
 
+  const colorMap = new Map<string, string>();
+  const colors = [
+    'rgb(59, 130, 246)', // blue
+    'rgb(16, 185, 129)', // green
+    'rgb(239, 68, 68)',  // red
+    'rgb(217, 70, 239)', // purple
+    'rgb(245, 158, 11)', // orange
+  ];
+  let colorIndex = 0;
+
+  events.forEach(event => {
+    if (event.parentId && !colorMap.has(event.parentId)) {
+      colorMap.set(event.parentId, colors[colorIndex % colors.length]);
+      colorIndex++;
+    }
+  });
+
   const edges = events
     .filter(event => event.parentId)
     .map(event => {
       const isLateralMovement = event.isLateralMovement || events.find(e => e.id === event.parentId)?.isLateralMovement;
+      const baseColor = event.parentId ? colorMap.get(event.parentId) || 'rgb(148, 163, 184)' : 'rgb(148, 163, 184)';
       
       return {
         id: `${event.parentId}-${event.id}`,
@@ -67,7 +85,7 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
         animated: isLateralMovement,
         className: isLateralMovement ? 'lateral' : undefined,
         style: { 
-          stroke: isLateralMovement ? '#ff6b6b' : 'rgb(148, 163, 184)',
+          stroke: isLateralMovement ? '#ff6b6b' : baseColor,
         },
       };
     });
