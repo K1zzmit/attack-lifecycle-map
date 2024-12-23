@@ -43,7 +43,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   }, [events, setNodes, setEdges]);
 
   const getNodeColor: GetMiniMapNodeAttribute = (node: Node) => {
-    const nodeData = node.data as NodeData;
+    const nodeData = node.data as { label: React.ReactElement<{ event: TimelineEvent }> };
     const event = nodeData.label.props.event;
     
     if (event.isLateralMovement) {
