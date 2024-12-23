@@ -37,12 +37,20 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   }, [events, setNodes, setEdges]);
 
   const getNodeColor: GetMiniMapNodeAttribute = (node) => {
+    if (!node.data?.label?.props?.event) return '#666666';
+    const event = node.data.label.props.event as TimelineEvent;
+    
+    // Color nodes differently if they represent lateral movement
+    if (event.isLateralMovement) {
+      return '#ff6b6b'; // Red for lateral movement
+    }
+
     const colorMap: Record<string, string> = {
       'Initial Access': '#ff0000',
       'Execution': '#00ff00',
       'Persistence': '#0000ff',
     };
-    return colorMap[node.data?.tactic as string] || '#666666';
+    return colorMap[event.tactic as string] || '#666666';
   };
 
   return (
@@ -76,6 +84,9 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
           [&_.react-flow__controls-button_svg]:!h-6
           [&_.react-flow__node]:!border-2 
           [&_.react-flow__node]:!border-border
+          [&_.react-flow__edge-path]:!stroke-[3px]
+          [&_.react-flow__edge.lateral]:!stroke-[#ff6b6b]
+          [&_.react-flow__edge.lateral]:!animate-pulse
         "
       >
         <Background />

@@ -28,9 +28,8 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
     nodesByLevel.get(level)?.push(nodeId);
   });
 
-  // Increased spacing between nodes
-  const horizontalSpacing = 400; // Increased from 250
-  const verticalSpacing = 250;   // Increased from 200
+  const horizontalSpacing = 400;
+  const verticalSpacing = 250;
 
   const nodes = events.map((event) => {
     const level = nodeLevels.get(event.id) || 0;
@@ -50,36 +49,28 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
         background: 'hsl(var(--background))',
         color: 'hsl(var(--foreground))',
         border: '1px solid hsl(var(--border))',
+        borderColor: event.isLateralMovement ? '#ff6b6b' : 'hsl(var(--border))',
+        borderWidth: event.isLateralMovement ? '3px' : '1px',
       },
     };
   });
 
-  const colorMap = new Map<string, string>();
-  const colors = [
-    'rgb(59, 130, 246)', // blue
-    'rgb(16, 185, 129)', // green
-    'rgb(239, 68, 68)',  // red
-    'rgb(217, 70, 239)', // purple
-    'rgb(245, 158, 11)', // orange
-  ];
-  let colorIndex = 0;
-
-  events.forEach(event => {
-    if (event.parentId && !colorMap.has(event.parentId)) {
-      colorMap.set(event.parentId, colors[colorIndex % colors.length]);
-      colorIndex++;
-    }
-  });
-
   const edges = events
     .filter(event => event.parentId)
-    .map(event => ({
-      id: `${event.parentId}-${event.id}`,
-      source: event.parentId!,
-      target: event.id,
-      animated: true,
-      style: { stroke: event.parentId ? colorMap.get(event.parentId) || 'rgb(148, 163, 184)' : 'rgb(148, 163, 184)' },
-    }));
+    .map(event => {
+      const isLateralMovement = event.isLateralMovement || events.find(e => e.id === event.parentId)?.isLateralMovement;
+      
+      return {
+        id: `${event.parentId}-${event.id}`,
+        source: event.parentId!,
+        target: event.id,
+        animated: isLateralMovement,
+        className: isLateralMovement ? 'lateral' : undefined,
+        style: { 
+          stroke: isLateralMovement ? '#ff6b6b' : 'rgb(148, 163, 184)',
+        },
+      };
+    });
 
   return { nodes, edges };
 };

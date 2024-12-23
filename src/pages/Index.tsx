@@ -23,6 +23,7 @@ export interface TimelineEvent {
   parentId?: string;
   artifacts: Artifact[];
   order?: number;
+  isLateralMovement?: boolean;
   // Additional fields for event details
   searchQuery?: string;
   rawLog?: string;
