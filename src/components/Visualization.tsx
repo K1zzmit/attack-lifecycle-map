@@ -56,21 +56,22 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
         className="
           [&_.react-flow__node]:!border-2 
           [&_.react-flow__node]:!border-border 
-          [&_.react-flow__controls]:!bg-primary 
-          [&_.react-flow__controls]:!border-none
+          [&_.react-flow__controls]:!bg-white 
+          [&_.react-flow__controls]:!border-2 
+          [&_.react-flow__controls]:!border-black 
           [&_.react-flow__controls]:!rounded-md 
-          [&_.react-flow__controls]:!shadow-xl
-          [&_.react-flow__controls-button]:!bg-primary 
-          [&_.react-flow__controls-button]:!border-none
-          [&_.react-flow__controls-button]:!text-primary-foreground
-          [&_.react-flow__controls-button:hover]:!bg-accent
-          [&_.react-flow__controls-button]:!transition-colors
-          [&_.react-flow__controls-button]:!duration-200
-          [&_.react-flow__controls]:!p-1
+          [&_.react-flow__controls]:!p-2
+          [&_.react-flow__controls]:!shadow-2xl
+          [&_.react-flow__controls-button]:!bg-white 
+          [&_.react-flow__controls-button]:!border-2
+          [&_.react-flow__controls-button]:!border-black
+          [&_.react-flow__controls-button]:!text-black
+          [&_.react-flow__controls-button:hover]:!bg-gray-200
           [&_.react-flow__controls-button]:!w-8
           [&_.react-flow__controls-button]:!h-8
-          [&_.react-flow__controls-button]:!rounded-sm
-          [&_.react-flow__controls-button]:!m-0.5
+          [&_.react-flow__controls-button]:!m-1
+          [&_.react-flow__controls-button]:!rounded-md
+          [&_.react-flow__controls-button]:!font-bold
         "
       >
         <Background />
