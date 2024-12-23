@@ -73,6 +73,9 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
           [&_.react-flow__controls-button]:!rounded-none
           [&_.react-flow__controls-button]:!font-bold
           [&_.react-flow__controls]:![transform:scale(1.2)]
+          [&_.react-flow__controls-button_svg]:!text-white
+          [&_.react-flow__controls-button_svg]:!w-6
+          [&_.react-flow__controls-button_svg]:!h-6
         "
       >
         <Background />
