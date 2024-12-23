@@ -5,6 +5,7 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
   const nodeLevels = new Map<string, number>();
   const processedNodes = new Set<string>();
   
+  // First pass: Calculate levels for non-lateral movement nodes
   const calculateLevels = (eventId: string, level: number) => {
     if (processedNodes.has(eventId)) return;
     
@@ -12,13 +13,28 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
     processedNodes.add(eventId);
     
     events
-      .filter(event => event.parentId === eventId)
+      .filter(event => event.parentId === eventId && !event.isLateralMovement)
       .forEach(child => calculateLevels(child.id, level + 1));
   };
 
+  // Find root events and calculate their levels
   events
     .filter(event => !event.parentId)
     .forEach(rootEvent => calculateLevels(rootEvent.id, 0));
+
+  // Second pass: Handle lateral movement nodes
+  events
+    .filter(event => event.isLateralMovement)
+    .forEach(event => {
+      // Place lateral movement nodes at level 0 (root level)
+      nodeLevels.set(event.id, 0);
+      processedNodes.add(event.id);
+      
+      // Calculate levels for their children
+      events
+        .filter(child => child.parentId === event.id)
+        .forEach(child => calculateLevels(child.id, 1));
+    });
 
   const nodesByLevel = new Map<number, string[]>();
   nodeLevels.forEach((level, nodeId) => {
@@ -90,5 +106,23 @@ export const calculateLayout = (events: TimelineEvent[]): { nodes: Node[], edges
       };
     });
 
-  return { nodes, edges };
+  // Add additional edges to show lateral movement source
+  const lateralMovementEdges = events
+    .filter(event => event.isLateralMovement && event.parentId)
+    .map(event => ({
+      id: `lateral-${event.parentId}-${event.id}`,
+      source: event.parentId!,
+      target: event.id,
+      animated: true,
+      className: 'lateral',
+      style: { 
+        stroke: '#ff6b6b',
+        strokeDasharray: '5,5',
+      },
+    }));
+
+  return { 
+    nodes, 
+    edges: [...edges, ...lateralMovementEdges]
+  };
 };

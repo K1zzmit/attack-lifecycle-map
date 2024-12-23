@@ -28,7 +28,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
     const nodesWithCustomRenderer = layoutNodes.map(node => ({
       ...node,
       data: { 
-        label: <TimelineNode event={node.data.label} /> 
+        label: <TimelineNode event={node.data.label as TimelineEvent} /> 
       }
     }));
 
@@ -37,8 +37,7 @@ const Visualization: React.FC<VisualizationProps> = ({ events }) => {
   }, [events, setNodes, setEdges]);
 
   const getNodeColor: GetMiniMapNodeAttribute = (node) => {
-    if (!node.data?.label?.event) return '#666666';
-    const event = node.data.label.event as TimelineEvent;
+    const event = (node.data?.label?.props?.event || {}) as TimelineEvent;
     
     if (event.isLateralMovement) {
       return '#ff6b6b';
